@@ -1,26 +1,55 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png"/>
   <!--<router-view></router-view>-->
-  <div id="test">
-    <Dialog :size="[500,400]" position="fixed" cover movable="body" icon="title">
-      <!--<template v-slot:mover>-->
-      <!--  <div style="background: red;width: 20px;height: 10px"></div>-->
-      <!--</template>-->
-      <div style="flex:1">
-        
-        This is content.
-      </div>
-    
-    </Dialog>
-  </div>
+  <Windows :items="items" :front="front"></Windows>
 </template>
 
-<script setup>
-import Dialog from "./components/Modal/Dialog.vue";
+<script>
 
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import Modal  from "./components/Modal/Modal.vue";
+import Dialog     from "./components/Modal/Dialog.vue";
+import Windows    from "./components/Windows/Windows";
+import {mapState} from "vuex";
+import Main       from "./modules/main/routes/Main.vue";
+
+export default {
+  components: {Dialog, Windows},
+  data() {
+    return {
+      options: {
+        id: "test",
+        title: "Window Title",
+        sizes: [500, 400],
+        attrs: {
+          name: "Alice"
+        },
+        content: () => import("./modules/main/routes/Main.vue")
+      },
+      options2: {
+        id: "test2",
+        title: "Window Title 2",
+        sizes: [500, 400],
+        attrs: {
+          name: "Angel"
+        },
+        content: () => import("./modules/main/routes/Main.vue")
+      }
+    }
+  },
+  computed: mapState({
+    items: state => state.commons.window.items,
+    front: state => state.commons.window.front,
+  }),
+  mounted() {
+    this.$store.dispatch("window.open", this.options);
+    this.$store.dispatch("window.open", this.options2);
+    setTimeout(() => {
+      // this.$store.dispatch("window.open", this.options);
+      // this.options.content = "Bob"
+      this.options2.attrs.name = "Bob"
+    }, 1500)
+    
+  }
+}
 </script>
 
 <style>

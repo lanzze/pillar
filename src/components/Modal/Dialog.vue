@@ -7,7 +7,7 @@
             <i class="icon" :class="normalIcon.content"></i>
           </div>
           <div class="modal.header.title">
-            <slot name="title">Title</slot>
+            <slot name="title">{{title}}</slot>
           </div>
           <div class="modal.header.control" v-if="!!maximizer||!!closer">
             <i class="icon" :class="normalMaximizer.content" @click.stop="switchMaximum" v-if="!!maximizer"></i>
@@ -16,15 +16,18 @@
         </slot>
       </div>
       <div class="modal.content" :class="contentClass">
-        <slot></slot>
+        <slot :validation.sync="validation"></slot>
       </div>
       <div class="modal.footer" v-if="!!footer">
         <slot name="footer">
           <button @click.stop="onCancel"
-                  :class="[normalCancel.color,normalCancel.size]"
+                  :class="[normalCancel.color,normalCancel.sizes]"
                   v-if="!!cancel">{{normalCancel.label}}
           </button>
-          <button @click.stop="onSubmit" v-if="!!submit">{{normalSubmit.label}}</button>
+          <button :disabled="!validation"
+                  @click.stop="onSubmit"
+                  v-if="!!submit">{{normalSubmit.label}}
+          </button>
         </slot>
       </div>
     </div>
@@ -86,10 +89,7 @@ export default {
     /**
      * A disabled flag for confirm button, this is use for form valid.
      */
-    validation: {
-      type: Boolean,
-      default: true
-    },
+    validator: Function,
     /**
      * If true, the dialog will close when confirm button clicked.
      */
@@ -114,6 +114,7 @@ export default {
   },
   data() {
     return {
+      validation: false,
       isMaximum: null,
       locator: null,
       sign: {L: null, T: null, X: null, Y: null}
@@ -195,20 +196,25 @@ export default {
         this.$emit("update:offset", this.locator);
       }
     },
-    onSubmit() {
-      if (this.closeOnSubmit) {
-        this.$emit("input", false);
-      }
-      this.$emit("confirm");
-    },
-    onCancel() {
-      this.$emit("input", false);
-      this.$emit("close");
-    },
     switchMaximum() {
       this.moving = false;
       this.$emit("update:maximum", this.isMaximum = !this.isMaximum);
-    }
+    },
+    onCancel() {
+      this.$emit("cancel");
+    },
+    onSubmit() {
+      if (this.validator != null) {
+        return this.validator().then(valid => {
+          if (valid) {
+            this.$emit("submit");
+            if (this.closeOnSubmit) this.$emit("cancel");
+          }
+        });
+      }
+      this.$emit("submit");
+      if (this.closeOnSubmit) this.$emit("cancel");
+    },
   },
   computed: {
     normalCloser() {

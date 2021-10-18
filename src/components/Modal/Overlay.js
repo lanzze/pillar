@@ -14,7 +14,7 @@ export default {
       type: Number,
       default: 9
     },
-    size: Array,
+    sizes: Array,
 
     /**
      * As {top,left,right,bottom}.

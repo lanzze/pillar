@@ -75,9 +75,14 @@ export default {
      * The 'options' passable value is:
      * @typedef {Object} options
      * @property {string} options.id The window id, unique.
-     * @property {Promise} options.component The inner component show on window.
+     * @property {[]|*} options.sizes [optional] The window size[width,height].
+     * @property {[]|*} options.title [optional] The window title.
+     * @property {[]|*} options.icon [optional] The window icon.
      * @property {Object} options.attrs [optional] The attrs value for options.component.
-     * @property {Object} options.config [optional] the attrs value for window.
+     * @property {Object} options.offset [optional] The window open offset.
+     * @property {Object} options.config [optional] the attrs value for {@link Dialog}.
+     * @property {function|String} options.content The inner component show on window.
+     * @property {[]} options.transition The animate on window open and close.
      * @property {function} options.onsubmit [optional] Call when client click 'Submit' button on window.
      * @property {function} options.oncancel [optional] Call when client click 'Cancel' button on window.
      * @param state {Object} Vuex.Store.state.

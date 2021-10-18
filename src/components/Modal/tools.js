@@ -6,8 +6,8 @@ function isp(value) {
   return typeof value === "string" && (value.match(/^.+(%|vh|vw)$/));
 }
 
-function doLocator(offset, size, locator, calcOffset, calcSize) {
-  let siz = size && size.map(function (v) {
+function doLocator(offset, sizes, locator, calcOffset, calcSize) {
+  let siz = sizes && sizes.map(function (v) {
     return isNaN(v) ? v : `${v}px`;
   });
   let top = calcOffset && ensure(locator.top != null ? locator.top : offset && offset.top);
@@ -33,15 +33,15 @@ export function toMainStyle(props, data) {
     return {position: props.position, zIndex: props.zIndex};
   }
 
-  let locator = doLocator(props.offset, props.size, data.locator, true, false);
+  let locator = doLocator(props.offset, props.sizes, data.locator, true, false);
 
   if (props.cover === false) {
-    if (props.size && isp(props.size[0])) {
-      locator.width = props.size[0];
+    if (props.sizes && isp(props.sizes[0])) {
+      locator.width = props.sizes[0];
     }
 
-    if (props.size && isp(props.size[1])) {
-      locator.height = props.size[1];
+    if (props.sizes && isp(props.sizes[1])) {
+      locator.height = props.sizes[1];
     }
   }
 
@@ -50,14 +50,14 @@ export function toMainStyle(props, data) {
 
 export function toBodyStyle(props, data) {
   let position = props.cover ? "absolute" : null;
-  let locator = doLocator(props.offset, props.size, data.locator, props.cover, true);
+  let locator = doLocator(props.offset, props.sizes, data.locator, props.cover, true);
 
   if (props.cover === false) {
-    if (props.size && isp(props.size[0])) {
+    if (props.sizes && isp(props.sizes[0])) {
       locator.width = "100%";
     }
 
-    if (props.size && isp(props.size[1])) {
+    if (props.sizes && isp(props.sizes[1])) {
       locator.height = "100%";
     }
   }

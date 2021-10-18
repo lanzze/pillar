@@ -32,21 +32,20 @@ const router = createRouter({
   ]
 });
 
-router.beforeEach((to, from, next) => {
-  // if (to.meta.free === true) {
-  //   return next()
-  // }
-  // if (to.matched.length === 0) {
-  //   return next("/notfound");
-  // }
-  // if (store.state.user == null) {
-  //   return next("/login");
-  // }
-  // if (filter(to.path, store) === true) {
-  //   return next();
-  // }
-  // return next("/unauthorized");
-  next();
-});
+// router.beforeEach((to, from, next) => {
+//   if (to.meta.free === true) {
+//     return next()
+//   }
+//   if (to.matched.length === 0) {
+//     return next("/notfound");
+//   }
+//   if (store.state.user == null) {
+//     return next("/login");
+//   }
+//   if (filter(to.path, store) === true) {
+//     return next();
+//   }
+//   return next("/unauthorized");
+// });
 
 export default router;

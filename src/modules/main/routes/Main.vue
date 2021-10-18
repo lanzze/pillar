@@ -1,11 +1,12 @@
 <template>
   <div id="module:main.main">
-    This is index.
+    Welcome : {{name}}, This is index.
   </div>
 </template>
 
 <script>
 export default {
-  name: "Main"
+  name: "Main",
+  props: ["name"]
 }
 </script>
