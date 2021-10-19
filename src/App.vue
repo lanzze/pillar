@@ -1,33 +1,45 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png"/>
   <!--<router-view></router-view>-->
-  <Windows :items="items" :front="front"></Windows>
+  <!--<Windows :items="items" :front="front"></Windows>-->
+  <!--<q-btn color="primary">This is a button?</q-btn>-->
+  <AutoForm :form="sample.form" :factory="factory" :model="model"></AutoForm>
 </template>
 
 <script>
 
-import Dialog     from "./components/Modal/Dialog.vue";
-import Windows    from "./components/Windows/Windows";
-import {mapState} from "vuex";
-import Main       from "./modules/main/routes/Main.vue";
+import {mapState}    from "vuex";
+import AutoForm      from "./components/AutoForm/AutoForm";
+import sample        from "./components/Manageunit/options.sample"
+import Windows       from "./components/Windows/Windows";
+import QuasarFactory from "./factories/quasar/QuasarFactory";
 
 export default {
-  components: {Dialog, Windows},
+  components: {AutoForm,  Windows},
   data() {
     return {
+      sample,
+      factory: new QuasarFactory(),
+      model: {},
       options: {
         id: "test",
+        window: "editor",
         title: "Window Title",
         sizes: [500, 400],
         attrs: {
           name: "Alice"
         },
-        content: () => import("./modules/main/routes/Main.vue")
+        config: {
+          maximizer: true,
+          modally: true,
+        },
+        content: () => import("./modules/main/routes/Main.vue"),
       },
       options2: {
         id: "test2",
         title: "Window Title 2",
         sizes: [500, 400],
+        offset: {top: 10, left: 10},
         attrs: {
           name: "Angel"
         },

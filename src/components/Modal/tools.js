@@ -29,13 +29,13 @@ function doLocator(offset, sizes, locator, calcOffset, calcSize) {
 }
 
 export function toMainStyle(props, data) {
-  if (props.cover) {
+  if (props.modally) {
     return {position: props.position, zIndex: props.zIndex};
   }
 
   let locator = doLocator(props.offset, props.sizes, data.locator, true, false);
 
-  if (props.cover === false) {
+  if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {
       locator.width = props.sizes[0];
     }
@@ -49,10 +49,10 @@ export function toMainStyle(props, data) {
 }
 
 export function toBodyStyle(props, data) {
-  let position = props.cover ? "absolute" : null;
-  let locator = doLocator(props.offset, props.sizes, data.locator, props.cover, true);
+  let position = props.modally ? "absolute" : null;
+  let locator = doLocator(props.offset, props.sizes, data.locator, props.modally, true);
 
-  if (props.cover === false) {
+  if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {
       locator.width = "100%";
     }

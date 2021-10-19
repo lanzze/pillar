@@ -28,6 +28,49 @@
   resolved "https://registry.npmmirror.com/@babel/parser/download/@babel/parser-7.15.8.tgz#7bacdcbe71bdc3ff936d510c15dcea7cf0b99016"
   integrity sha1-e6zcvnG9w/+TbVEMFdzqfPC5kBY=
 
+"@intlify/core-base@9.2.0-beta.13":
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/@intlify/core-base/download/@intlify/core-base-9.2.0-beta.13.tgz#2acfd00d527788310e24b55a61fdc7b6dd6f502d"
+  integrity sha1-Ks/QDVJ3iDEOJLVaYf3Htt1vUC0=
+  dependencies:
+    "@intlify/devtools-if" "9.2.0-beta.13"
+    "@intlify/message-compiler" "9.2.0-beta.13"
+    "@intlify/shared" "9.2.0-beta.13"
+    "@intlify/vue-devtools" "9.2.0-beta.13"
+
+"@intlify/devtools-if@9.2.0-beta.13":
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/@intlify/devtools-if/download/@intlify/devtools-if-9.2.0-beta.13.tgz#69643b5f077066c3b3c2d4ce75e4cd05138cfa0b"
+  integrity sha1-aWQ7XwdwZsOzwtTOdeTNBROM+gs=
+  dependencies:
+    "@intlify/shared" "9.2.0-beta.13"
+
+"@intlify/message-compiler@9.2.0-beta.13":
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/@intlify/message-compiler/download/@intlify/message-compiler-9.2.0-beta.13.tgz#b7323b7259d33d476df038d93ecc3d822d706210"
+  integrity sha1-tzI7clnTPUdt8DjZPsw9gi1wYhA=
+  dependencies:
+    "@intlify/shared" "9.2.0-beta.13"
+    source-map "0.6.1"
+
+"@intlify/shared@9.2.0-beta.13":
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/@intlify/shared/download/@intlify/shared-9.2.0-beta.13.tgz#c1072fa4ad08c408ebc2ec74a3a9e7ee02e5da5f"
+  integrity sha1-wQcvpK0IxAjrwux0o6nn7gLl2l8=
+
+"@intlify/vue-devtools@9.2.0-beta.13":
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/@intlify/vue-devtools/download/@intlify/vue-devtools-9.2.0-beta.13.tgz#2ff65801380e4979aaa88903e606104e411f869d"
+  integrity sha1-L/ZYATgOSXmqqIkD5gYQTkEfhp0=
+  dependencies:
+    "@intlify/core-base" "9.2.0-beta.13"
+    "@intlify/shared" "9.2.0-beta.13"
+
+"@quasar/extras@^1.0.0":
+  version "1.11.2"
+  resolved "https://registry.npmmirror.com/@quasar/extras/download/@quasar/extras-1.11.2.tgz#07f959cc2a6801052a07b623abf206a9e9ea10c7"
+  integrity sha1-B/lZzCpoAQUqB7Yjq/IGqenqEMc=
+
 "@types/minimist@^1.2.0":
   version "1.2.2"
   resolved "https://registry.nlark.com/@types/minimist/download/@types/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
@@ -85,7 +128,7 @@
     "@vue/compiler-dom" "3.2.20"
     "@vue/shared" "3.2.20"
 
-"@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.0.0-beta.14":
+"@vue/devtools-api@^6.0.0-beta.11", "@vue/devtools-api@^6.0.0-beta.13", "@vue/devtools-api@^6.0.0-beta.14":
   version "6.0.0-beta.19"
   resolved "https://registry.npmmirror.com/@vue/devtools-api/download/@vue/devtools-api-6.0.0-beta.19.tgz#f8e88059daa424515992426a0c7ea5cde07e99bf"
   integrity sha1-+OiAWdqkJFFZkkJqDH6lzeB+mb8=
@@ -349,6 +392,15 @@ cliui@^5.0.0:
     string-width "^3.1.0"
     strip-ansi "^5.2.0"
     wrap-ansi "^5.1.0"
+
+clone-deep@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.nlark.com/clone-deep/download/clone-deep-4.0.1.tgz#c19fd9bdbbf85942b4fd979c84dcf7d5f07c2387"
+  integrity sha1-wZ/Zvbv4WUK0/ZechNz31fB8I4c=
+  dependencies:
+    is-plain-object "^2.0.4"
+    kind-of "^6.0.2"
+    shallow-clone "^3.0.0"
 
 code-point-at@^1.0.0:
   version "1.1.0"
@@ -887,6 +939,13 @@ is-plain-obj@^1.1.0:
   resolved "https://registry.npm.taobao.org/is-plain-obj/download/is-plain-obj-1.1.0.tgz?cache=0&sync_timestamp=1618601044820&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fis-plain-obj%2Fdownload%2Fis-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
   integrity sha1-caUMhCnfync8kqOQpKA7OfzVHT4=
 
+is-plain-object@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.nlark.com/is-plain-object/download/is-plain-object-2.0.4.tgz#2c163b3fafb1b606d9d17928f05c2a1c38e07677"
+  integrity sha1-LBY7P6+xtgbZ0Xko8FwqHDjgdnc=
+  dependencies:
+    isobject "^3.0.1"
+
 is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/is-typedarray/download/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
@@ -901,6 +960,11 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/isexe/download/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
+
+isobject@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npm.taobao.org/isobject/download/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
+  integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -959,7 +1023,7 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-kind-of@^6.0.3:
+kind-of@^6.0.2, kind-of@^6.0.3:
   version "6.0.3"
   resolved "https://registry.nlark.com/kind-of/download/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha1-B8BQNKbDSfoG4k+jWqdttFgM5N0=
@@ -1320,6 +1384,11 @@ qs@~6.5.2:
   resolved "https://registry.nlark.com/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha1-yzroBuh0BERYTvFUzo7pjUA/PjY=
 
+quasar@^2.0.0:
+  version "2.1.5"
+  resolved "https://registry.npmmirror.com/quasar/download/quasar-2.1.5.tgz#636bea9166630af62a93bd378ab29c62995b030c"
+  integrity sha1-Y2vqkWZjCvYqk703irKcYplbAww=
+
 quick-lru@^4.0.1:
   version "4.0.1"
   resolved "https://registry.nlark.com/quick-lru/download/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
@@ -1495,6 +1564,13 @@ set-blocking@^2.0.0, set-blocking@~2.0.0:
   resolved "https://registry.npm.taobao.org/set-blocking/download/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
 
+shallow-clone@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.npm.taobao.org/shallow-clone/download/shallow-clone-3.0.1.tgz#8f2981ad92531f55035b01fb230769a40e02efa3"
+  integrity sha1-jymBrZJTH1UDWwH7IwdppA4C76M=
+  dependencies:
+    kind-of "^6.0.2"
+
 shebang-command@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/shebang-command/download/shebang-command-2.0.0.tgz#ccd0af4f8835fbdc265b82461aaf0c36663f34ea"
@@ -1517,17 +1593,17 @@ source-map-js@^0.6.2:
   resolved "https://registry.npm.taobao.org/source-map-js/download/source-map-js-0.6.2.tgz#0bb5de631b41cfbda6cfba8bd05a80efdfd2385e"
   integrity sha1-C7XeYxtBz72mz7qL0FqA79/SOF4=
 
+source-map@0.6.1, source-map@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
+  integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
+
 source-map@^0.4.2:
   version "0.4.4"
   resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.4.4.tgz#eba4f5da9c0dc999de68032d8b4f76173652036b"
   integrity sha1-66T12pwNyZneaAMti092FzZSA2s=
   dependencies:
     amdefine ">=0.0.4"
-
-source-map@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.npm.taobao.org/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
-  integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
 
 sourcemap-codec@^1.4.4:
   version "1.4.8"
@@ -1767,6 +1843,23 @@ vite@^2.6.4:
   optionalDependencies:
     fsevents "~2.3.2"
 
+vue-cli-plugin-quasar@~4.0.2:
+  version "4.0.2"
+  resolved "https://registry.nlark.com/vue-cli-plugin-quasar/download/vue-cli-plugin-quasar-4.0.2.tgz#e85f4c7d7f1e48c223698acadb25c82ef8c5f1a2"
+  integrity sha1-6F9MfX8eSMIjaYrK2yXILvjF8aI=
+  dependencies:
+    webpack-merge "^5.7.3"
+
+vue-i18n@^9.2.0-beta.13:
+  version "9.2.0-beta.13"
+  resolved "https://registry.npmmirror.com/vue-i18n/download/vue-i18n-9.2.0-beta.13.tgz#9eddd884a4677c5d022358b48eae175bc5e05ab6"
+  integrity sha1-nt3YhKRnfF0CI1i0jq4XW8XgWrY=
+  dependencies:
+    "@intlify/core-base" "9.2.0-beta.13"
+    "@intlify/shared" "9.2.0-beta.13"
+    "@intlify/vue-devtools" "9.2.0-beta.13"
+    "@vue/devtools-api" "^6.0.0-beta.13"
+
 vue-router@4:
   version "4.0.11"
   resolved "https://registry.nlark.com/vue-router/download/vue-router-4.0.11.tgz?cache=0&sync_timestamp=1628495505697&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fvue-router%2Fdownload%2Fvue-router-4.0.11.tgz#cd649a0941c635281763a20965b599643ddc68ed"
@@ -1792,6 +1885,14 @@ vuex@^4.0.2:
   dependencies:
     "@vue/devtools-api" "^6.0.0-beta.11"
 
+webpack-merge@^5.7.3:
+  version "5.8.0"
+  resolved "https://registry.nlark.com/webpack-merge/download/webpack-merge-5.8.0.tgz#2b39dbf22af87776ad744c390223731d30a68f61"
+  integrity sha1-Kznb8ir4d3atdEw5AiNzHTCmj2E=
+  dependencies:
+    clone-deep "^4.0.1"
+    wildcard "^2.0.0"
+
 which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/which-module/download/which-module-2.0.0.tgz?cache=0&sync_timestamp=1614792316802&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fwhich-module%2Fdownload%2Fwhich-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
@@ -1810,6 +1911,11 @@ wide-align@^1.1.0:
   integrity sha1-rgdOa9wMFKQx6ATmJFScYzsABFc=
   dependencies:
     string-width "^1.0.2 || 2"
+
+wildcard@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/wildcard/download/wildcard-2.0.0.tgz#a77d20e5200c6faaac979e4b3aadc7b3dd7f8fec"
+  integrity sha1-p30g5SAMb6qsl55LOq3Hs91/j+w=
 
 wrap-ansi@^5.1.0:
   version "5.1.0"

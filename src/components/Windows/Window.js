@@ -8,6 +8,19 @@ export default {
     config: Object,
     options: Object
   },
+  data() {
+    return {layer: 0}
+  },
+  watch: {
+    zIndex: {
+      immediate: true,
+      handler(index) {
+        if (index !== this.layer) {
+          this.layer = index;
+        }
+      }
+    }
+  },
   render() {
     const options = this.options;
     const isComponent = options.content instanceof Function;
@@ -21,8 +34,8 @@ export default {
             sizes: options.sizes,
             title: options.title,
             offset: options.offset,
-            modal: options.modal,
-            zIndex: this.zIndex,
+            zIndex: this.layer,
+            modally: options.modally,
             onSubmit: () => this.$emit("close", this.options.id),
             onCancel: () => this.$emit("close", this.options.id),
           },

@@ -7,7 +7,6 @@ export default {
   props: {
     items: {type: Array, default: () => []},
     front: String,
-    config: Object,
     zIndex: {
       type: Number,
       default: zIndex
@@ -18,10 +17,14 @@ export default {
   },
   methods: {
     onFront(id) {
-      // TODO THIS IS WRONG CODE
-      let item = this.items.find(e => e.id === id);
-      if (item != null && item.zIndex < zIndex - 1) {
-        item.zIndex = zIndex;
+      let window = this.$refs[id];
+      if (window != null && window.layer < zIndex - 1) {
+        /**
+         * We have to update this value by directly.
+         * Because we don't want to update all window when some window's zIndex change.
+         * That's no necessary.
+         */
+        window.layer = zIndex++;
       }
     },
     onClose(id) {
@@ -34,11 +37,10 @@ export default {
         H(Window, {
           ref: item.id,
           key: item.id,
-          config: this.config,
+          zIndex: item.zIndex || zIndex++,
           options: item,
           onClose: this.onClose,
-          onClick: () => this.onFront(item.id),
-          zIndex: (item.zIndex = item.zIndex || zIndex++)
+          onClick: () => this.onFront(item.id)
         }));
     return H("div", {class: "component.windows"}, children);
   }
