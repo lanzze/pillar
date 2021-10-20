@@ -6,17 +6,18 @@ export default {
   form: {
     items: [
       {
-        field: "name",
         label: "Name",
+        field: "name",
         placeholder: "Input one",
         default: "Alice",
-        content: "textfield",
-        attrs: {}
+        component: "textfield",
+        attrs: {},
       },
       {
+        label: "Sex",
         field: "sex",
         default: "boy",
-        content: "radio",
+        component: "radio",
         source: [{
           label: "Boy",
           value: "boy"
@@ -25,7 +26,26 @@ export default {
             label: "Girl",
             value: "girl"
           }],
-        attrs: {}
+        attrs: {
+          size: "middle"
+        }
+      },
+      {
+        label: "Sex",
+        field: "sex2",
+        default: "boy",
+        component: "select",
+        source: [{
+          label: "Boy",
+          value: "boy"
+        },
+          {
+            label: "Girl",
+            value: "girl"
+          }],
+        attrs: {
+          size: "middle"
+        }
       }
     ]
   }

@@ -1,4 +1,5 @@
-import Lookup from "../../core/Lookup";
+import website from "../../config/website";
+import Lookup  from "../../core/Lookup";
 
 /**
  * The request agent of ajax.
@@ -40,14 +41,13 @@ class RequestAgent {
   fetch(key, data, config = {}) {
     let options = this.mappings[key];
     if (options == null) {
-      return Promise.reject({code: -1, error: new Error("No mapping found for key: " + key)});
+      return Promise.reject({code: website.LOCAL_ERROR_CODE, error: new Error("No mapping found for key: " + key)});
     }
     /**
      * If options was a string, that means options just a url and use post.
-     * And no config use in request.
      */
     if (typeof options === "string" || options instanceof String) {
-      return Lookup.ajax.post(options, data);
+      return Lookup.ajax.post(options, data, config);
     }
     /**
      * Otherwise, options was an object. The options will merge with parameter 'config'.

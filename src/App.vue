@@ -3,23 +3,21 @@
   <!--<router-view></router-view>-->
   <!--<Windows :items="items" :front="front"></Windows>-->
   <!--<q-btn color="primary">This is a button?</q-btn>-->
-  <AutoForm :form="sample.form" :factory="factory" :model="model"></AutoForm>
+  <ElementForm :model="model" :form="sample.form"></ElementForm>
 </template>
 
 <script>
 
-import {mapState}    from "vuex";
-import AutoForm      from "./components/AutoForm/AutoForm";
-import sample        from "./components/Manageunit/options.sample"
-import Windows       from "./components/Windows/Windows";
-import QuasarFactory from "./factories/quasar/QuasarFactory";
+import {mapState}  from "vuex";
+import ElementForm from "./components/Manageunit/element/ElementForm";
+import sample      from "./components/Manageunit/options.sample"
+import Windows     from "./components/Windows/Windows";
 
 export default {
-  components: {AutoForm,  Windows},
+  components: {ElementForm,  Windows},
   data() {
     return {
       sample,
-      factory: new QuasarFactory(),
       model: {},
       options: {
         id: "test",
@@ -52,13 +50,13 @@ export default {
     front: state => state.commons.window.front,
   }),
   mounted() {
-    this.$store.dispatch("window.open", this.options);
-    this.$store.dispatch("window.open", this.options2);
-    setTimeout(() => {
-      // this.$store.dispatch("window.open", this.options);
-      // this.options.content = "Bob"
-      this.options2.attrs.name = "Bob"
-    }, 1500)
+    // this.$store.dispatch("window.open", this.options);
+    // this.$store.dispatch("window.open", this.options2);
+    // setTimeout(() => {
+    //   // this.$store.dispatch("window.open", this.options);
+    //   // this.options.content = "Bob"
+    //   this.options2.attrs.name = "Bob"
+    // }, 1500)
     
   }
 }

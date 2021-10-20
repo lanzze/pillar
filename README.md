@@ -1,4 +1,4 @@
-# pillar
+# Pillar
 A web framework base on Vue3.
 
 
