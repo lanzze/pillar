@@ -1,37 +1,34 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png"/>
   <!--<router-view></router-view>-->
-  <!--<Windows :items="items" :front="front"></Windows>-->
+  <Windows :items="windows.items" :front="windows.front" :layer="windows.layer"></Windows>
   <!--<q-btn color="primary">This is a button?</q-btn>-->
-  <ElementForm :model="model" :form="sample.form"></ElementForm>
+  <!--<ElementForm :model="model" :form="sample.form"></ElementForm>-->
+  <!--<Dialog title="Test" maximizer modally>-->
+  <!--  This is a simple content.-->
+  <!--  That means you don't to know the details.-->
+  <!--</Dialog>-->
 </template>
 
 <script>
 
-import {mapState}  from "vuex";
-import ElementForm from "./components/Manageunit/element/ElementForm";
-import sample      from "./components/Manageunit/options.sample"
-import Windows     from "./components/Windows/Windows";
+import {mapState} from "vuex";
+import Dialog     from "./components/Modal/Dialog.vue";
+import Windows    from "./components/Windows/Windows";
 
 export default {
-  components: {ElementForm,  Windows},
+  components: {Dialog, Windows},
   data() {
     return {
-      sample,
       model: {},
       options: {
         id: "test",
-        window: "editor",
         title: "Window Title",
-        sizes: [500, 400],
+        // sizes: [null, 500],
         attrs: {
           name: "Alice"
         },
-        config: {
-          maximizer: true,
-          modally: true,
-        },
-        content: () => import("./modules/main/routes/Main.vue"),
+        content: () => import("./components/Editor.vue"),
       },
       options2: {
         id: "test2",
@@ -46,11 +43,10 @@ export default {
     }
   },
   computed: mapState({
-    items: state => state.commons.window.items,
-    front: state => state.commons.window.front,
+    windows: state => state.commons.windows
   }),
   mounted() {
-    // this.$store.dispatch("window.open", this.options);
+    this.$store.dispatch("window.open", this.options);
     // this.$store.dispatch("window.open", this.options2);
     // setTimeout(() => {
     //   // this.$store.dispatch("window.open", this.options);

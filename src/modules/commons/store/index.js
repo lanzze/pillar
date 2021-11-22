@@ -5,14 +5,14 @@ export default {
   state: {
     jobs: null,           // All job instance.
     /**
-     * The window state. Do not change the property directly.
+     * The windows state. Do not change the property directly.
      * @see window.open
      * @see window.hide
      */
-    window: {
+    windows: {
       items: [],          // All window object(Opened).
       front: null,        // A id point to foremost window.
-      zIndex: 999999999   // Default css z-index.
+      layer: 999999999   // Default css z-index.
     }
   },
   mutations: {},
@@ -89,12 +89,12 @@ export default {
      * @param options {options} The window options.
      */
     "window.open"({state}, options) {
-      let window = state.window.items.find(e => e.id === options.id);
+      let window = state.windows.items.find(e => e.id === options.id);
       if (window != null) {
-        state.window.front = options.id;
+        state.windows.front = options.id;
         return Object.assign(window, options);
       }
-      state.window.items.push(options);
+      state.windows.items.push(options);
     },
 
     /**
@@ -105,10 +105,22 @@ export default {
      * @param id {String} The window id.
      */
     "window.hide"({state}, id) {
-      let index = state.window.items.findIndex(e => e.id === id);
+      let index = state.windows.items.findIndex(e => e.id === id);
       if (index >= 0) {
-        state.window.items.splice(index, 1);
+        state.windows.items.splice(index, 1);
       }
     },
+    "window.once"(context, options) {
+      return new Promise(((resolve, reject) => {
+        context.dispatch("window.open", {
+          id: Math.random().toString(16),
+          modally: true,
+          maximizer: false,
+          ...options,
+          onSubmit: resolve,
+          onCancel: reject
+        })
+      }));
+    }
   }
 };

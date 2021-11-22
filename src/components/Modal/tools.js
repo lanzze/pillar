@@ -6,26 +6,31 @@ function isp(value) {
   return typeof value === "string" && (value.match(/^.+(%|vh|vw)$/));
 }
 
-function doLocator(offset, sizes, locator, calcOffset, calcSize) {
+function doLocator(offset, sizes, locator, offsetable, sizeable) {
   let siz = sizes && sizes.map(function (v) {
-    return isNaN(v) ? v : `${v}px`;
+    return v == null || isNaN(v) ? v : `${v}px`;
   });
-  let top = calcOffset && ensure(locator.top != null ? locator.top : offset && offset.top);
-  let lft = calcOffset && ensure(locator.left != null ? locator.left : offset && offset.left);
-  let rgt = calcOffset && ensure(offset && offset.right);
-  let bom = calcOffset && ensure(offset && offset.bottom);
-  let wid = siz && siz[0],
-      hei = siz && siz[1];
-
-  if (!top && !bom && calcOffset) {
-    top = siz ? `calc(50% - ${siz[1]}/2)` : 0;
+  let top = offsetable && ensure(locator.top != null ? locator.top : offset && offset.top);
+  let lft = offsetable && ensure(locator.left != null ? locator.left : offset && offset.left);
+  let rgt = offsetable && ensure(offset && offset.right);
+  let bom = offsetable && ensure(offset && offset.bottom);
+  let wid = siz && siz[0], hei = siz && siz[1];
+  let transformX, transformY, transform;
+  if (!top && !bom && offsetable) {
+    top = (siz && siz[1] != null) ? `calc(50% - ${siz[1]}/2)` : "50%";
+    transformY = (siz && siz[1] != null) ? undefined : "translateY(-50%)";
   }
 
-  if (!lft && !rgt && calcOffset) {
-    lft = siz ? `calc(50% - ${siz[0]}/2)` : 0;
+  if (!lft && !rgt && offsetable) {
+    lft = (siz && siz[0] != null) ? `calc(50% - ${siz[0]}/2)` : "50%";
+    transformX = (siz && siz[0] != null) ? undefined : "translateX(-50%)";
   }
 
-  return {top: top, left: lft, right: rgt, bottom: bom, width: calcSize && wid, height: calcSize && hei};
+  if (transformX || transformY) {
+    transform = `${transformX || ""} ${transformY || ""}`;
+  }
+
+  return {top: top, left: lft, right: rgt, bottom: bom, width: sizeable && wid, height: sizeable && hei, transform};
 }
 
 export function toMainStyle(props, data) {
@@ -33,7 +38,7 @@ export function toMainStyle(props, data) {
     return {position: props.position, zIndex: props.zIndex};
   }
 
-  let locator = doLocator(props.offset, props.sizes, data.locator, true, false);
+  let locator = doLocator(props.offset, props.sizes, data.locator, !data.isMaximum, false);
 
   if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {
@@ -50,7 +55,7 @@ export function toMainStyle(props, data) {
 
 export function toBodyStyle(props, data) {
   let position = props.modally ? "absolute" : null;
-  let locator = doLocator(props.offset, props.sizes, data.locator, props.modally, true);
+  let locator = doLocator(props.offset, props.sizes, data.locator, props.modally && !data.isMaximum, true);
 
   if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {

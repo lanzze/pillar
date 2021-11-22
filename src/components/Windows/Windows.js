@@ -1,5 +1,5 @@
-import {h as H} from "vue";
-import Window   from "./Window";
+import {h as H}  from "vue";
+import Container from "./Container";
 
 let zIndex = 999999999;
 export default {
@@ -7,13 +7,16 @@ export default {
   props: {
     items: {type: Array, default: () => []},
     front: String,
-    zIndex: {
+    layer: {
       type: Number,
       default: zIndex
     }
   },
   watch: {
     front(id) { this.onFront(id) }
+  },
+  created() {
+    zIndex = this.layer;
   },
   methods: {
     onFront(id) {
@@ -34,12 +37,12 @@ export default {
   },
   render() {
     let children = this.items.map(item =>
-        H(Window, {
+        H(Container, {
           ref: item.id,
           key: item.id,
           zIndex: item.zIndex || zIndex++,
           options: item,
-          onClose: this.onClose,
+          onClose: () => this.onClose(item.id),
           onClick: () => this.onFront(item.id)
         }));
     return H("div", {class: "component.windows"}, children);

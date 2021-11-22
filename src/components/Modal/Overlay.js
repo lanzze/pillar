@@ -124,8 +124,9 @@ export default {
     },
     down(event) {
       let element = this.modally ? this.$refs.body : this.$el;
-      this.sign.L = element.offsetLeft;
-      this.sign.T = element.offsetTop;
+      let bounder = element.getBoundingClientRect();
+      this.sign.L = bounder.left;
+      this.sign.T = bounder.top;
       this.sign.X = event.x;
       this.sign.Y = event.y;
       this.moving = true;
@@ -133,7 +134,7 @@ export default {
     move(event) {
       let moved = this.sign.X !== event.x || this.sign.Y !== event.y;
 
-      if (moved && this.moving && !this.maximum) {
+      if (moved && this.moving && !this.isMaximum) {
         event.preventDefault();
         delete this.locator.right;
         delete this.locator.bottom;
