@@ -50,7 +50,7 @@ export function toMainStyle(props, data) {
     }
   }
 
-  return Object.assign({position: props.position, overflow: props.overflow, zIndex: props.zIndex}, locator);
+  return {position: props.position, overflow: props.overflow, zIndex: props.zIndex, ...locator};
 }
 
 export function toBodyStyle(props, data) {
@@ -67,7 +67,7 @@ export function toBodyStyle(props, data) {
     }
   }
 
-  return Object.assign({position: position, overflow: props.overflow}, locator);
+  return {position: position, overflow: props.overflow, ...locator};
 }
 
 export function clamp(value, min, max) {

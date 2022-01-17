@@ -106,10 +106,6 @@ export default {
         this.down(event);
       }
     },
-    switchMaximum() {
-      this.moving = false;
-      this.$emit("update:maximum", this.isMaximum = !this.isMaximum);
-    },
     onCancel() {
       this.$emit("cancel");
     },

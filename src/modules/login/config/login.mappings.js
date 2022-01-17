@@ -1,6 +1,6 @@
 export default {
   "login.login-by-account": {
-    url: "/api/lecent-system/loginByAccount",
+    url: "/api/system/loginByAccount",
     method: "post"
   }
 }

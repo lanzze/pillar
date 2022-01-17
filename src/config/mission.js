@@ -29,7 +29,7 @@ const missions = [{
   // The heartbeat mission, beat in every 30 minutes by default.
   id: "heartbeat",
   immediate: true,
-  trigger: {cron: "0 */30 * * * ?",},
+  trigger: {cron: "0 */30 * * * ?"},
   source: "commons.heartbeat",
   execute(context, data, start) {
     const difference = data + Math.round((Date.now() - start) / 2) - Date.now();

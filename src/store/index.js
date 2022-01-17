@@ -25,7 +25,7 @@ export default createStore({
     theme: "default",
     /**
      * The time diff between client and server.
-     * Sometimes, the client date not same with server, so we store the time diff.
+     * Sometimes, the client date not same with server, so we store the time diff value.
      * This value will update by heartbeat mission, but first update by client connect server at first time.
      * @type Number
      */

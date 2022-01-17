@@ -3,7 +3,7 @@
     <div ref="body" class="modal.body" :style="bodyStyle">
       <div class="modal.content" :class="contentClass" @mousedown.stop="onMouseDown($event,'content')">
         <div class="modal.mover" @mousedown.stop="onMouseDown($event,'mover')" v-if="hasMover">
-          <slot name="mover"></slot>
+          <slot name="mover" :switchMaximum="switchMaximum"></slot>
         </div>
         <slot></slot>
       </div>

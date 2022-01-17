@@ -160,7 +160,11 @@ export default {
 
         this.$emit("update:offset", this.locator);
       }
-    }
+    },
+    switchMaximum() {
+      this.moving = false;
+      this.$emit("update:maximum", this.isMaximum = !this.isMaximum);
+    },
   },
   computed: {
     mainClass() {

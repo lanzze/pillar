@@ -1,5 +1,5 @@
 // import schedule from "node-schedule";
-import missions from "../config/mission";
+import missions from "../../../config/mission";
 
 export default {
   state: {
@@ -11,8 +11,8 @@ export default {
      */
     windows: {
       items: [],          // All window object(Opened).
-      front: null,        // A id point to foremost window.
-      layer: 999999999   // Default css z-index.
+      front: null,        // An id point to foremost window.
+      layer: 999999999    // Default css z-index.
     }
   },
   mutations: {},
@@ -110,6 +110,14 @@ export default {
         state.windows.items.splice(index, 1);
       }
     },
+    /**
+     * Open a window and return a {@link Promise} object, you can use '.then' or '.catch' get window action.
+     * If user click the 'SUBMIT' button, then the {@link Promise} will resolve,
+     * if user click the 'CANCEL' button, then the {@link Promise} will reject.
+     * @param context
+     * @param options {Object} like 'window.open'.
+     * @returns {Promise<unknown>}
+     */
     "window.once"(context, options) {
       return new Promise(((resolve, reject) => {
         context.dispatch("window.open", {

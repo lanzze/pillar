@@ -18,18 +18,18 @@ class RequestAgent {
   }
 
   /**
-   * Any request to server. Provide a request key, data and config for it.
+   * Any request to server. You can provide a request key, data and config for request.
    *
    * The request url, method, config object will get from mappings by key.
    * If you want to cancel request, please set 'config.cancel=true',
-   * the inner code will set 'config.cancel' to cancel function, you can call it to cancel request();
+   * the inner code will set 'config.cancel' to cancel function, you can call it to cancel request;
    *
    * Know that, the response data from server is pure data, no code or message in it.
    * If you want get that information, please set 'config.original=true'.
    *
-   * And, if have any error, the inner code will handle it. If you want to no notice show on screen when error happened,
+   * And, if have any error, the inner code will handle it. If you don't want to sey notice show on screen when error happened,
    * set 'config.silent=true'. Also you can use '.catch(reject=>{})' to catch the error.
-   * The 'reject' object have two field, witch is 'code'(the response code as integer) and 'error'(the Error object instance).
+   * The parameter of 'reject' just have two field, witch is 'code'(the response code as integer) and 'error'(the Error object instance).
    *
    * If use get request, the data will inject as 'params' field, otherwise inject as 'data' field.
    *

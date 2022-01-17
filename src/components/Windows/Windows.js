@@ -24,7 +24,7 @@ export default {
       if (window != null && window.layer < zIndex - 1) {
         /**
          * We have to update this value by directly.
-         * Because we don't want to update all window when some window's zIndex change.
+         * Because we don't want to update all window when some window's zIndex changed.
          * That's no necessary.
          */
         window.layer = zIndex++;

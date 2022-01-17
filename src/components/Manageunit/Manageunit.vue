@@ -213,8 +213,8 @@ export default {
       }
 
       /**
-       * This meas the action will do some sample things.
-       * Like delete, disable ...
+       * This meas the action just do some sample things.
+       * Like delete, disable, update status ...
        */
       Promise.resolve().then(() => {
         if (action.confirm) {
