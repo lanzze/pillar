@@ -83,8 +83,8 @@ export default {
      * @property {Object} options.config [optional] the attrs value for {@link Dialog}.
      * @property {function|String} options.content The inner component show on window.
      * @property {[]} options.transition The animate on window open and close.
-     * @property {function} options.onsubmit [optional] Call when client click 'Submit' button on window.
-     * @property {function} options.oncancel [optional] Call when client click 'Cancel' button on window.
+     * @property {function} options.onSubmit [optional] Call when client click 'Submit' button on window.
+     * @property {function} options.onCancel [optional] Call when client click 'Cancel' button on window.
      * @param state {Object} Vuex.Store.state.
      * @param options {options} The window options.
      */
@@ -114,6 +114,10 @@ export default {
      * Open a window and return a {@link Promise} object, you can use '.then' or '.catch' get window action.
      * If user click the 'SUBMIT' button, then the {@link Promise} will resolve,
      * if user click the 'CANCEL' button, then the {@link Promise} will reject.
+     *
+     * Usually, when user click 'SUBMIT' or 'CANCEL' or other 'ACTION' event, the window will close,
+     * If you want to change that, set 'options.prevent=true'.
+     *
      * @param context
      * @param options {Object} like 'window.open'.
      * @returns {Promise<unknown>}
@@ -123,6 +127,7 @@ export default {
         context.dispatch("window.open", {
           id: Math.random().toString(16),
           modally: true,
+          prevent: false,
           maximizer: false,
           ...options,
           onSubmit: resolve,
