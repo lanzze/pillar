@@ -8,6 +8,8 @@
   <!--  This is a simple content.-->
   <!--  That means you don't to know the details.-->
   <!--</Dialog>-->
+  <div class="text-red-600">Hello Tailwindcss</div>
+  <q-btn>Quasar Button</q-btn>
 </template>
 
 <script>

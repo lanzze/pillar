@@ -9,7 +9,7 @@ import "./config/modules";
 import "./components/index.scss";
 
 import {Quasar}          from 'quasar'
-import quasarUserOptions from './quasar-user-options'
+import quasarUserOptions from './plugins/quasar/quasar-user-options'
 
 import zh_CN from "./locale/lang/zh_CN";
 
