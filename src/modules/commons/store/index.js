@@ -12,7 +12,7 @@ export default {
     windows: {
       items: [],          // All window object(Opened).
       front: null,        // An id point to foremost window.
-      layer: 999999999    // Default css z-index.
+      layer: 1000000000   // Default css z-index.
     }
   },
   mutations: {},
@@ -94,7 +94,9 @@ export default {
         state.windows.front = options.id;
         return Object.assign(window, options);
       }
-      state.windows.items.push(options);
+      if (options.content) {
+        setTimeout(() => state.windows.items.push(options), 0);
+      }
     },
 
     /**

@@ -1,52 +1,43 @@
-import {defineAsyncComponent}     from "vue";
-import {h as H, resolveComponent} from "vue";
-import Dialog                     from "../Modal/Dialog.vue";
+import {isRef, ref}              from "vue";
+import {Transition}              from "vue";
+import {defineAsyncComponent, h} from "vue";
+import Dialog                    from "../Modal/Dialog.vue";
 
 export default {
   name: "Container",
   props: {
-    zIndex: Number,
+    zIndex: [Number, ref],
     options: Object,
   },
-  data() { return {layer: 0, model: null, validation: true} },
-  watch: {
-    zIndex: {
-      immediate: true,
-      handler(index) {
-        if (index !== this.layer) {
-          this.layer = index;
-        }
+  setup(props, context) {
+    let model = null;
+    const validation = ref(true);
+    const onAction = (name, ...args) => {
+      if (props.options.onAction) props.options.onAction(name, ...args);
+      if (props.options.prevent !== true) {
+        context.emit("close");
       }
     }
-  },
-  methods: {
-    onAction(name, ...args) {
-      if (this.options.onSubmit) this.options.onSubmit(name, ...args);
-      if (this.options.prevent !== true) {
-        this.$emit("close");
-      }
-    },
-    onSubmit() {
-      if (this.options.onSubmit) this.options.onSubmit(this.model);
-      if (this.options.prevent !== true) {
-        this.$emit("close");
-      }
-    },
-    onCancel() {
-      if (this.options.onCancel) this.options.onCancel();
-      if (this.options.prevent !== true) {
-        this.$emit("close");
+    const onSubmit = () => {
+      if (props.options.onSubmit) props.options.onSubmit(model);
+      if (props.options.prevent !== true) {
+        context.emit("close");
       }
     }
-  },
-  render() {
-    const options = this.options;
+    const onCancel = () => {
+      if (props.options.onCancel) props.options.onCancel();
+      if (props.options.prevent !== true) {
+        context.emit("close");
+      }
+    }
+
+    const options = props.options;
     const isComponent = options.content instanceof Function;
-    return H(resolveComponent("transition"), {
+    return () => h(Transition, {
       appear: true,
-      "appear-active-class": "open",
-      "leave-active-class": "window.hide"
-    }, [H(Dialog, {
+      "enter-active-class": options.animation?.enter || "window.enter-active",
+      "leave-active-class": options.animation?.leave || "window.leave-active",
+    }, [h(Dialog, {
           icon: options.icon,
           sizes: options.sizes,
           title: options.title,
@@ -57,28 +48,26 @@ export default {
           cancel: options.cancel,
           submit: options.submit,
           status: options.status,
-          zIndex: this.layer,
           modally: options.modally,
           maximum: options.maximum,
-          overflow: options.overflow,
           maximizer: options.maximizer,
-          validation: this.validation,
-          onSubmit: this.onSubmit,
-          onCancel: this.onCancel,
+          validation: validation.value,
+          zIndex: isRef(props.zIndex) ? props.zIndex.value : props.zIndex,
+          onSubmit,
+          onCancel,
           ...options.modal
         },
         [isComponent ?
-            H(defineAsyncComponent(options.content), {
+            h(defineAsyncComponent(options.content), {
               ...options.attrs,
-              onSubmit: this.onSubmit,
-              onCancel: this.onCancel,
-              onAction: this.onAction,
-              onInput: value => this.model = value,
-              "onUpdate:validation": value => this.validation = value
+              onSubmit,
+              onCancel,
+              onAction,
+              onInput: value => model = value,
+              "onUpdate:validation": value => validation.value = value
             }) :
-            H("div", {innerHTML: options.content})
+            h("div", {innerHTML: options.content})
         ]
-    )
-    ]);
+    )]);
   }
 }

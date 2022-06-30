@@ -98,7 +98,9 @@ export default {
     footer: {
       type: Boolean,
       default: true
-    }
+    },
+    
+    validation: Boolean,
   },
   methods: {
     onMouseDown(event, target) {

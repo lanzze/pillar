@@ -1,5 +1,5 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png"/>
+  <!--<Test :names="names"></Test>-->
   <!--<router-view></router-view>-->
   <Windows :items="windows.items" :front="windows.front" :layer="windows.layer"></Windows>
   <!--<q-btn color="primary">This is a button?</q-btn>-->
@@ -8,20 +8,26 @@
   <!--  This is a simple content.-->
   <!--  That means you don't to know the details.-->
   <!--</Dialog>-->
-  <div class="text-red-600">Hello Tailwindcss</div>
-  <q-btn>Quasar Button</q-btn>
+  
+  <ExpansionDirectory v-bind="sample.directory.attribute"></ExpansionDirectory>
+
 </template>
 
 <script>
 
-import {mapState} from "vuex";
-import Dialog     from "./components/Modal/Dialog.vue";
-import Windows    from "./components/Windows/Windows";
+import {mapState}         from "vuex";
+import ExpansionDirectory from "./components/Explorer/ExpansionDirectory";
+import Dialog             from "./components/Modal/Dialog.vue";
+import Windows            from "./components/Windows/Windows";
+import Test               from "./Test";
+import sample             from "./components/Explorer/options.sample"
 
 export default {
-  components: {Dialog, Windows},
+  components: {ExpansionDirectory, Test, Dialog, Windows},
   data() {
     return {
+      sample,
+      names: [],
       model: {},
       options: {
         id: "test",
@@ -48,11 +54,9 @@ export default {
     windows: state => state.commons.windows
   }),
   mounted() {
-    this.$store.dispatch("window.open", this.options);
     // this.$store.dispatch("window.open", this.options2);
     // setTimeout(() => {
-    //   // this.$store.dispatch("window.open", this.options);
-    //   // this.options.content = "Bob"
+    //   this.$store.dispatch("window.open", this.options);
     //   this.options2.attrs.name = "Bob"
     // }, 1500)
     
@@ -80,4 +84,11 @@ export default {
   border: 1px solid green;
 }
 
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 2.5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

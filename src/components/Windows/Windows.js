@@ -1,50 +1,41 @@
-import {h as H}  from "vue";
-import Container from "./Container";
+import {ref}      from "vue";
+import {reactive} from "vue";
+import {h}        from "vue";
+import Container  from "./Container";
 
-let zIndex = 999999999;
 export default {
   name: "Windows",
   props: {
     items: {type: Array, default: () => []},
     front: String,
-    layer: {
-      type: Number,
-      default: zIndex
-    }
+    layer: Number
   },
-  watch: {
-    front(id) { this.onFront(id) }
-  },
-  created() {
-    zIndex = this.layer;
-  },
-  methods: {
-    onFront(id) {
-      let window = this.$refs[id];
-      if (window != null && window.layer < zIndex - 1) {
-        /**
-         * We have to update this value by directly.
-         * Because we don't want to update all window when some window's zIndex changed.
-         * That's no necessary.
-         */
-        window.layer = zIndex++;
+  setup(props) {
+    let zIndex = props.layer;
+    const indices = reactive({});
+    const refs = reactive({});
+    const onFront = (id) => {
+      let window = refs[id];
+      if (window != null && indices[id] < zIndex - 1) {
+        indices[id] = zIndex++;
       }
-    },
-    onClose(id) {
-      let index = this.items.findIndex(e => e.id === id);
-      if (index >= 0) this.items.splice(index, 1);
-    },
-  },
-  render() {
-    let children = this.items.map(item =>
-        H(Container, {
-          ref: item.id,
+    }
+    const onClose = (id) => {
+      let index = props.items.findIndex(e => e.id === id);
+      if (index >= 0) props.items.splice(index, 1);
+      delete refs[id];
+      delete indices[id];
+    }
+
+    return () => h("div", {class: "component.windows"}, props.items.map(item =>
+        h(Container, {
           key: item.id,
-          zIndex: item.zIndex || zIndex++,
+          ref: target => refs[item.id] = target,
+          zIndex: (indices[item.id] = ref(item.zIndex || zIndex++)),
           options: item,
-          onClose: () => this.onClose(item.id),
-          onClick: () => this.onFront(item.id)
-        }));
-    return H("div", {class: "component.windows"}, children);
+          onClose: () => onClose(item.id),
+          onClick: () => onFront(item.id)
+        })
+    ));
   }
 }

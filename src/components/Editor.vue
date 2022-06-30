@@ -9,12 +9,12 @@ export default {
   name: "Editor",
   methods: {
     onOpen() {
-      this.$store.dispatch("window.once", {
+      this.$store.dispatch("window.open", {
+        id: "ch",
         title: "Choose",
         content: () => import("./CH.vue"),
-        attrs: {value: "Alice"}
-      }).then(() => alert("You click the submit"))
-          .catch(() => alert("You click the cancel"));
+        attrs: {obj: {value: "Alice"}}
+      });
     }
   }
 }
