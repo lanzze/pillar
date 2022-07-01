@@ -3,10 +3,14 @@ const options = {
   "modal.icon.maximum": "",
   "modal.icon.minimum": "",
   "modal.icon.closer": "white",
-  "modal.icon.cancel": "white",
-  "modal.icon.submit": "white",
-  "modal.icon.submit.validating": "white",
-  "modal.icon.submit.saving": "white",
+  "modal.cancel.icon": "white",
+  "modal.cancel.label": "white",
+  "modal.cancel.color": "white",
+  "modal.submit.icon": "white",
+  "modal.submit.label": "white",
+  "modal.submit.color": "white",
+  "modal.submit.icon.validating": "white",
+  "modal.submit.icon.saving": "white",
 };
 
 export function configure(newOptions) {

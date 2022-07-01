@@ -12,7 +12,7 @@ export default {
   setup(props, context) {
     const config = props.config, directory = config.directory, managunit = config.managunit;
 
-    let selected = null, itemkey = config.options.itemkey;
+    let selected = null, itemkey = config.configure.itemkey;
     let optioned = computed(() => {
       if (selected != null) {
         let key = itemkey instanceof Function ? itemkey(selected) : itemkey;
@@ -23,21 +23,21 @@ export default {
       }
     });
 
-    return h("div",
-        {class: "commons component explorer"},
+    return h("div", {class: "commons:explorer"},
         [
-          h(defineAsyncComponent(directory.component),
+          directory && h(defineAsyncComponent(directory.component),
               {
                 attrs: directory.attribute,
                 on: {
                   select: item => selected = item
                 }
-              }),
-          optioned ? h(defineAsyncComponent(managunit.component),
-                  {
-                    attrs: optioned
-                  })
-              : undefined
+              }
+          ),
+          optioned && h(defineAsyncComponent(managunit.component),
+              {
+                attrs: optioned
+              }
+          )
         ])
   }
 }

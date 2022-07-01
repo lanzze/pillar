@@ -1,7 +1,6 @@
 import {clamp}       from "./tools";
 import {toBodyStyle} from "./tools";
 import {toMainStyle} from "./tools";
-import options       from "../component.options";
 
 /**
  * The common props define for {@link Modal} and {@link Dialog}.
@@ -80,7 +79,6 @@ export default {
   },
   data() {
     return {
-      options,
       moving: false,
       locator: null,
       isMaximum: false,

@@ -24,10 +24,10 @@
       </div>
       <div class="modal.footer" v-if="!!footer">
         <slot name="footer">
-          <button @click.stop="onCancel" v-if="!!cancel">
-            <i :class="options['modal.icon.cancel']"></i>
+          <q-btn @click.stop="onCancel" :icon="icon" v-if="!!cancel">
+            
             <span>{{$t(cancel)}}</span>
-          </button>
+          </q-btn>
           <button @click.stop="onSubmit" v-if="!!submit">
             <i :class="options['modal.icon.submit']"></i>
             <span>{{$t(submit)}}</span>
@@ -39,6 +39,7 @@
 </template>
 <script>
 import Overlay from "./Overlay";
+import options from "../component.options";
 
 let zIndex = 999999999;
 export default {
@@ -79,11 +80,11 @@ export default {
     },
     cancel: {
       type: [Boolean, String],
-      default: "modal.cancel"
+      default: options["modal.cancel.label"]
     },
     submit: {
       type: [Boolean, String],
-      default: "modal.submit"
+      default: options["modal.submit.label"]
     },
     /**
      * Set this dialog has header or not.
@@ -99,8 +100,15 @@ export default {
       type: Boolean,
       default: true
     },
-    
     validation: Boolean,
+    "icon.cancel": {
+      type: String,
+      default: options["modal.cancel.icon"]
+    },
+    "icon.submit": {
+      type: String,
+      default: options["modal.submit.icon"]
+    }
   },
   methods: {
     onMouseDown(event, target) {
