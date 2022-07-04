@@ -34,6 +34,7 @@ export default {
     }
     const convert = (item) => {
       return h(resolveComponent("q-expansion-item"), {
+            ...props.natives,
             key: item[mapping.value],
             label: item[mapping.label],
             caption: item[mapping.caption],
@@ -49,6 +50,9 @@ export default {
       if (remote) fetch(null, items)
     });
 
-    return () => h(resolveComponent("q-list"), {}, items.map(e => convert(e)));
+    return () => h("div",
+        {class: "explorer__directory__expansion"},
+        [h(resolveComponent("q-list"), {}, items.map(e => convert(e)))]
+    );
   }
 }

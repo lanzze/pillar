@@ -9,8 +9,9 @@
   <!--  That means you don't to know the details.-->
   <!--</Dialog>-->
   
-  <ExpansionDirectory v-bind="sample.directory.attribute"></ExpansionDirectory>
-
+  <!--<ExpansionDirectory v-bind="sample.directory.attribute"></ExpansionDirectory>-->
+  
+ <Test></Test>
 </template>
 
 <script>
@@ -19,11 +20,12 @@ import {mapState}         from "vuex";
 import ExpansionDirectory from "./components/Explorer/ExpansionDirectory";
 import Dialog             from "./components/Modal/Dialog.vue";
 import Windows            from "./components/Windows/Windows";
-import Test               from "./Test";
-import sample             from "./components/Explorer/options.sample"
+import SlotsTest from "./SlotsTest";
+import Test      from "./Test.js";
+import sample    from "./components/Explorer/options.sample"
 
 export default {
-  components: {ExpansionDirectory, Test, Dialog, Windows},
+  components: {SlotsTest, ExpansionDirectory, Test, Dialog, Windows},
   data() {
     return {
       sample,

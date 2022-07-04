@@ -11,7 +11,7 @@ export default {
     querier: Object,
     content: Object,
     options: Object,
-    actived: Object
+    actives: Object
   },
   setup(props, context) {
     const options    = props.options,
@@ -23,89 +23,103 @@ export default {
           data       = Array.isArray(source) ? source : reactive([]);
     const selections = reactive([]);
 
-    const get = (config, key, def) => {
-      return typeof config === "string" ? def : config[key];
+    const get = (target, ...args) => {
+      return target instanceof Function ? target(...args) : target;
     }
 
     const doModifyChain = ({modify}, model) => {
       Promise.resolve()
           .then(() => {
-            let notice = modify.notice;
-            if (notice) {
+            if (modify.notice) {
               return context.dispatch("window.once", {
-                id: `modify.notice:${context.id}`,
-                content: get(notice, "content", notice),
-                attribute: {
-                  contentClass: get(notice, "color")
-                }
+                modally: true,
+                content: modify.notice
               });
             }
           })
           .then(() => modify.handle(model, context))
           .then(() => {
-            let inform = modify.inform;
-            if (inform) {
+            if (modify.inform) {
               context.commit("notify", {
-                title: get(inform, "content"),
-                color: get(inform, "color", "info")
+                title: get(modify.inform, model),
+                color: "success"
               });
             }
           })
           .then(() => modify.update && fetch(1))
           .catch(() => {
-            let failed = modify.failed;
-            if (failed) {
+            if (modify.failed) {
               context.commit("notify", {
-                title: get(failed, "content"),
-                color: get(failed, "color", "error")
+                title: get(modify.failed, model),
+                color: "error"
               });
             }
           });
     }
     const doWindowChain = ({window}, model) => {
-      const status = ref(global["modal.icon.submit.saving"]);
-      Promise.resolve()
-          .then(() => context.dispatch("window.once", {
-            id: window.id,
-            sizes: window.size,
-            content: window.content,
-            attribute: {model: window.transform ? window.transform(model) : model},
-          }))
-          .then(value => {
-            if (window.verify) {
-              return window.verify(value, context)
-                  .then(message => {
-                    if (message != null) {
-                      return context.commit("notify", {title: message, color: "warning"})
-                    }
-                  });
-            }
-          })
-          .then(value => {
-            if (window.stored) {
-              //todo update status
-              return window.stored(value, context);
-            }
-          })
-          .then(() => {
-            let inform = window.inform;
-            if (inform) {
-              context.commit("notify", {
-                title: get(inform, "content"),
-                color: get(inform, "color", "info")
-              });
-            }
-          })
-          .then(() => window.update && fetch())
-          .catch(() => {
-            let failed = window.failed;
-            if (failed) {
-              context.commit("notify", {
-                title: get(failed, "content"),
-                color: get(failed, "color", "error")
-              });
-            }
-          })
+      const submit = reactive({});
+      const doSubmitChain = value => {
+        Promise.resolve()
+            .then(() => {
+              submit.image = global["modal.submit.image.saving"];
+              submit.label = global["modal.submit.label.saving"];
+            })
+            .then(() => {
+              if (window.verify) {
+                return window.verify(value, context)
+                    .then(message => {
+                      if (message != null) {
+                        return Promise.reject(message);
+                      }
+                    });
+              }
+            })
+            .then(() => {
+              if (window.stored) {
+                return window.stored(value, context);
+              }
+            })
+            .then(() => {
+              if (window.inform) {
+                context.commit("notify", {title: window.inform, color: "info"});
+              }
+            })
+            .catch(error => {
+              if (error != null) {
+                context.commit("notify", {title: error, color: "error"});
+              }
+            })
+            .finally(() => {
+              // todo cancel loading
+            })
+      }
+      const doCancelChain = () => {
+        Promise.reject()
+            .then(() => {
+              if (window.careful) {
+                return context.dispatch("window.once", {
+                  modally: true,
+                  content: get(window.careful, model)
+                })
+              }
+            })
+            .then(() => {
+              context.dispatch("window.hide", window.id)
+            })
+      }
+      context.dispatch("window.open", {
+        id: window.id,
+        title: get(window.title, model),
+        sizes: window.sizes,
+        content: window.content,
+        submit,
+        onSubmit: doSubmitChain,
+        onCancel: doCancelChain,
+        attribute: {
+          value: window.transform ? window.transform(model) : model,
+          ...window.attribute
+        },
+      });
     }
     const doCustomChain = ({handle}, model) => {
       handle(model, context, fetch);
@@ -124,7 +138,7 @@ export default {
 
       loading.value = true;
       error.value = false;
-      source.call(null, {actived: props.actived, condition, pagination}, context)
+      source.call(null, {actives: props.actives, condition, pagination}, context)
           .then(ret => {
             const lists = Array.isArray(ret) ? ret[0] : ret;
             const paged = Array.isArray(ret) ? ret[1] : null;
@@ -142,70 +156,49 @@ export default {
       if (source instanceof Function && options.immediate) fetch();
     });
 
-    return () => h(resolveComponent("div"), {id: "commons.managunit"}, [
+    return () => h(resolveComponent("div"), {class: "explorer__managunit"}, [
       // render menubar content
       props.menubar &&
-      h(resolveComponent("div"),
+      h(defineAsyncComponent(props.menubar.component),
           {
-            class: "explorer.managunit:menubar",
-          },
-          [defineAsyncComponent(props.menubar.component),
-            {
-              ...props.menubar.attribute,
-              selections,
-              data,
-              onAction: onActionHandler
-            }
-          ]
+            ...props.menubar.attribute,
+            selections,
+            data,
+            onAction: onActionHandler
+          }
       ),
       // render heading content
       props.heading &&
-      h(resolveComponent("div"),
+      h(defineAsyncComponent(props.heading.component),
           {
-            class: "explorer.managunit:heading",
-          },
-          [defineAsyncComponent(props.heading.component),
-            {
-              ...props.heading.attribute,
-            }
-          ]
+            ...props.heading.attribute
+          }
       ),
       // render querier content
       props.querier &&
-      h(resolveComponent("div"),
+      h(defineAsyncComponent(props.querier.component),
           {
-            class: "explorer.managunit:querier",
-          },
-          [defineAsyncComponent(props.querier.component),
-            {
-              ...props.querier.attribute,
-              condition,
-              selections,
-              loading,
-              error,
-              data,
-              onAction: onActionHandler,
-              onQuery: fetch
-            }
-          ]
+            ...props.querier.attribute,
+            condition,
+            selections,
+            loading,
+            error,
+            data,
+            onAction: onActionHandler,
+            onQuery: fetch
+          }
       ),
       // render real content
-      props.content &&
-      h(resolveComponent("div"),
+      h(defineAsyncComponent(props.content.component),
           {
-            class: "explorer.managunit:content",
-          },
-          [defineAsyncComponent(props.content.component),
-            {
-              ...props.content.attribute,
-              selections,
-              pagination,
-              loading,
-              error,
-              data,
-              onAction: onActionHandler
-            }
-          ]
+            ...props.content.attribute,
+            selections,
+            pagination,
+            loading,
+            error,
+            data,
+            onAction: onActionHandler
+          }
       )
     ])
   }

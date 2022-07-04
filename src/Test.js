@@ -1,12 +1,12 @@
-import {h as H, ref} from "vue";
+import {renderSlot} from "vue";
+import {h, ref}     from "vue";
+import SlotsTest    from "./SlotsTest.js";
 
 export default {
   name: "Test",
-  props: ["names"],
+  props: ["names", "values"],
   setup(props, context) {
-    console.log(props);
-    let count = ref(0);
-    setInterval(() => count.value++, 1000);
-    return () => H("div", props.names.join(","));
+    return () => h(SlotsTest, {}, renderSlot(context.slots, "header")
+    )
   }
 }

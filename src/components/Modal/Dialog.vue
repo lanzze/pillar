@@ -24,9 +24,10 @@
       </div>
       <div class="modal.footer" v-if="!!footer">
         <slot name="footer">
-          <q-btn @click.stop="onCancel" :icon="icon" v-if="!!cancel">
-            
-            <span>{{$t(cancel)}}</span>
+          <q-btn @click.stop="onCancel"
+                 :color="cancel.color"
+                 :icon="cancel.image" v-if="!!cancel">
+            <span>{{cancel.label}}</span>
           </q-btn>
           <button @click.stop="onSubmit" v-if="!!submit">
             <i :class="options['modal.icon.submit']"></i>
@@ -39,9 +40,9 @@
 </template>
 <script>
 import Overlay from "./Overlay";
-import options from "../component.options";
+// import options from "../component.options";
 
-let zIndex = 999999999;
+let zIndex = 333333;
 export default {
   name: "Dialog",
   extends: Overlay,
@@ -50,19 +51,8 @@ export default {
       type: Number,
       default: () => zIndex++
     },
-    /**
-     * The title icon.
-     */
     icon: String,
     title: String,
-    
-    /**
-     * Set this dialog has close button or not, set to string change the default icon.
-     */
-    closer: {
-      type: Boolean,
-      default: true
-    },
     maximizer: Boolean,
     /**
      * Set dialog movable, the value specify move place.
@@ -78,14 +68,12 @@ export default {
         return value === false || value === "header" || value === "body";
       }
     },
-    cancel: {
-      type: [Boolean, String],
-      default: options["modal.cancel.label"]
+    closer: {
+      type: Boolean,
+      default: true
     },
-    submit: {
-      type: [Boolean, String],
-      default: options["modal.submit.label"]
-    },
+    cancel: [Boolean, Object],
+    submit: [Boolean, Object],
     /**
      * Set this dialog has header or not.
      */
@@ -101,27 +89,17 @@ export default {
       default: true
     },
     validation: Boolean,
-    "icon.cancel": {
-      type: String,
-      default: options["modal.cancel.icon"]
-    },
-    "icon.submit": {
-      type: String,
-      default: options["modal.submit.icon"]
-    }
   },
-  methods: {
-    onMouseDown(event, target) {
-      if (this.movable === target) {
-        this.down(event);
-      }
-    },
-    onCancel() {
-      this.$emit("cancel");
-    },
-    onSubmit() {
-      this.$emit("submit");
-    },
+  setup(props, context) {
+    return {
+      onMouseDown(event, target) {
+        if (props.movable === target) {
+          this.down(event);
+        }
+      },
+      onCancel: () => context.$emit("cancel"),
+      onSubmit: () => context.$emit("submit")
+    }
   }
-};
+}
 </script>

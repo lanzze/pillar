@@ -31,7 +31,36 @@ export default {
     basic: {
       component: () => import(""),
       attribute: {
+        heading: {
+          component: {},
+          attribute: {
+            title: "get form item",
+            subtitle: ""
+          }
+        },
+        menubar: {
+          component: () => import(""),
+          options: {
+            items: [
+              {
+                label: "",
+                title: "",
+                color: "",
+                native: {}
+              }
+            ]
+          }
+        },
+        querier: {
+          component: () => import(""),
+          attribute: {
+            mapping: {
+              keyword: "keyword"
+            }
+          }
+        },
         content: {
+          component: () => import("./TableContent.vue"),
           attribute: {
             actions: [
               {
@@ -42,10 +71,10 @@ export default {
                   },
                   verify: () => {
 
-                  }
+                  },
+                  careful: ""
                 },
                 modify: {
-                  allows: model => "",
                   notice: "",
                   inform: "",
                   failed: "",
@@ -58,7 +87,8 @@ export default {
 
                 }
               }
-            ]
+            ],
+            natives: {}
           }
         },
         options: {
@@ -72,37 +102,7 @@ export default {
       },
     },
     items: {
-      [0]: {
-        component: () => import(""),
-        attribute: {
-          heading: {
-            component: {},
-            attribute: {
-              title: "get form item",
-              subtitle: ""
-            }
-          },
-          menubar: {
-            component: () => import(""),
-            options: {
-              items: [
-                {
-                  label: "",
-                  title: "",
-                  color: "",
-                  native: {}
-                }
-              ]
-            }
-          },
-          querier: {
-            component: () => import(""),
-            options: {}
-          },
-          content: {},
-          options: {}
-        }
-      }
+      [0]: {} // as basic
     },
   },
   configure: {

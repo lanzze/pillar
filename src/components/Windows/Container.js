@@ -47,7 +47,6 @@ export default {
           closer: options.closer,
           cancel: options.cancel,
           submit: options.submit,
-          status: options.status,
           modally: options.modally,
           maximum: options.maximum,
           maximizer: options.maximizer,

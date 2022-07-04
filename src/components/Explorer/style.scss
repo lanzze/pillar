@@ -1,0 +1,16 @@
+.explorer {
+
+}
+
+.managunit {
+  &.querier {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    &.--keyword {
+      flex: 1;
+    }
+  }
+}

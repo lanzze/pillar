@@ -11,21 +11,21 @@
   </div>
 </template>
 <script>
-import Overlay from "./Overlay";
+import {computed} from "vue";
+import Overlay    from "./Overlay";
 
 export default {
   name: "Modal",
   extends: Overlay,
-  methods: {
-    onMouseDown(event, target) {
-      if (this.movable && (this.hasMover ? target === 'mover' : true)) {
-        this.down(event);
+  setup(props, context) {
+    const hasMover = computed(() => !!context.slots.mover)
+    return {
+      hasMover,
+      onMouseDown(event, target) {
+        if (props.movable && (hasMover ? target === 'mover' : true)) {
+          this.down(event);
+        }
       }
-    },
-  },
-  computed: {
-    hasMover() {
-      return !!this.$slots.mover;
     }
   }
 };

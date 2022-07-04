@@ -23,7 +23,7 @@ export default {
       }
     });
 
-    return h("div", {class: "commons:explorer"},
+    return h("div", {class: "explorer"},
         [
           directory && h(defineAsyncComponent(directory.component),
               {

@@ -8,14 +8,18 @@ export default {
       required: true
     }
   }, setup(props, context) {
-    return () => props.items.map(e => h(resolveComponent("q-btn"),
-        {
-          ...e.native,
-          icon: e.icon,
-          label: e.label,
-          title: e.title,
-          color: e.color,
-          onclick: () => context.emit("action", e),
-        }))
+
+    return () => h("div", {class: "explorer__managunit__menubar"},
+        props.items.map(e => h(resolveComponent("q-btn"),
+            {
+              ...e.natives,
+              class: "explorer__managunit__menubar-item",
+              icon: e.icon,
+              label: e.label,
+              title: e.title,
+              color: e.color,
+              onclick: () => context.emit("action", e),
+            }))
+    )
   }
 }
