@@ -1,6 +1,7 @@
 import {h, computed}          from "vue";
 import {defineAsyncComponent} from "vue/dist/vue";
 import {assign}               from "loadsh"
+import {isCssColor}           from "./explorer.tools";
 
 export default {
   props: {
@@ -23,7 +24,12 @@ export default {
       }
     });
 
-    return h("div", {class: "explorer"},
+    const css = isCssColor(config.color);
+    return h("div",
+        {
+          class: `explorer ${css ? undefined : config.color}`,
+          style: `background:${css ? css : undefined}`
+        },
         [
           directory && h(defineAsyncComponent(directory.component),
               {

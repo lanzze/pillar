@@ -24,23 +24,32 @@
       </div>
       <div class="modal.footer" v-if="!!footer">
         <slot name="footer">
-          <q-btn @click.stop="onCancel"
+          <q-btn :icon="cancel.image"
                  :color="cancel.color"
-                 :icon="cancel.image" v-if="!!cancel">
-            <span>{{cancel.label}}</span>
+                 :label="cancel.label"
+                 v-bind="cancel.native"
+                 @click.stop="onCancel"
+                 v-if="!!cancel">
           </q-btn>
-          <button @click.stop="onSubmit" v-if="!!submit">
-            <i :class="options['modal.icon.submit']"></i>
-            <span>{{$t(submit)}}</span>
-          </button>
+          <q-btn :icon="submit.image"
+                 :color="submit.color"
+                 :label="submit.label"
+                 :loading="progress"
+                 v-bind="submit.native"
+                 @click.stop="onSubmit" v-if="!!submit">
+            <template v-slot:loading>
+              <component :is="progressor.component" v-bind="progressor.attribute"></component>
+            </template>
+          </q-btn>
         </slot>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Overlay from "./Overlay";
-// import options from "../component.options";
+import {reactive} from "vue";
+import Overlay    from "./Overlay";
+import options    from "../component.options";
 
 let zIndex = 333333;
 export default {
@@ -89,9 +98,27 @@ export default {
       default: true
     },
     validation: Boolean,
+    progress: Boolean
   },
   setup(props, context) {
     return {
+      submit: props.submit === false ? false : Object.assign(reactive({
+        label: options["modal.submit.label"],
+        color: options["modal.submit.color"],
+        image: options["modal.submit.image"],
+      }), props.submit),
+      
+      cancel: props.submit === false ? false : Object.assign(reactive({
+        label: options["modal.cancel.label"],
+        color: options["modal.cancel.color"],
+        image: options["modal.cancel.image"],
+      }), props.cancel),
+      
+      progressor: {
+        component: options["modal.progress"],
+        attribute: options["modal.progress.native"],
+      },
+      
       onMouseDown(event, target) {
         if (props.movable === target) {
           this.down(event);

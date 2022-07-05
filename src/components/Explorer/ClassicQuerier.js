@@ -19,7 +19,9 @@ export default {
             modelValue: props.condition[props.mapping.keyword],
             "update:model-value": value => props.condition[props.mapping.keyword] = value
           }),
+
           h("div", {class: "explorer__managunit__querier-splitter"}),
+
           h(resolveComponent("q-btn"), {
             ...props.natives.query,
             onclick: () => context.emit("query")

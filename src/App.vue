@@ -10,8 +10,7 @@
   <!--</Dialog>-->
   
   <!--<ExpansionDirectory v-bind="sample.directory.attribute"></ExpansionDirectory>-->
-  
- <Test></Test>
+  <q-btn @[event]="onEvent"></q-btn>
 </template>
 
 <script>
@@ -20,14 +19,15 @@ import {mapState}         from "vuex";
 import ExpansionDirectory from "./components/Explorer/ExpansionDirectory";
 import Dialog             from "./components/Modal/Dialog.vue";
 import Windows            from "./components/Windows/Windows";
-import SlotsTest from "./SlotsTest";
-import Test      from "./Test.js";
-import sample    from "./components/Explorer/options.sample"
+import SlotsTest          from "./SlotsTest";
+import Test               from "./Test.js";
+import sample             from "./components/Explorer/options.sample"
 
 export default {
   components: {SlotsTest, ExpansionDirectory, Test, Dialog, Windows},
   data() {
     return {
+      event: "click",
       sample,
       names: [],
       model: {},
@@ -38,7 +38,7 @@ export default {
         attrs: {
           name: "Alice"
         },
-        content: () => import("./components/Editor.vue"),
+        content: () => import("./components/Editor.vue")
       },
       options2: {
         id: "test2",
@@ -50,6 +50,11 @@ export default {
         },
         content: () => import("./modules/main/routes/Main.vue")
       }
+    }
+  },
+  methods: {
+    onEvent() {
+      alert(0)
     }
   },
   computed: mapState({

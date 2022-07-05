@@ -19,7 +19,7 @@ export default {
           condition  = options.condition,
           pagination = options.pagination,
           loading    = ref(false),
-          error      = ref(false),
+          errored    = ref(false),
           data       = Array.isArray(source) ? source : reactive([]);
     const selections = reactive([]);
 
@@ -27,46 +27,42 @@ export default {
       return target instanceof Function ? target(...args) : target;
     }
 
-    const doModifyChain = ({modify}, model) => {
+    const doModifyChain = (action, model) => {
       Promise.resolve()
           .then(() => {
-            if (modify.notice) {
-              return context.dispatch("window.once", {
-                modally: true,
-                content: modify.notice
-              });
+            if (action.notice) {
+              return context.dispatch("window.once", {modally: true, content: action.notice});
             }
           })
-          .then(() => modify.handle(model, context))
+          .then(() => action.handle(model, context))
           .then(() => {
-            if (modify.inform) {
-              context.commit("notify", {
-                title: get(modify.inform, model),
-                color: "success"
-              });
+            if (action.inform) {
+              context.commit("notify", {title: get(action.inform, model), color: "success"});
             }
           })
-          .then(() => modify.update && fetch(1))
+          .then(() => action.update && fetch())
           .catch(() => {
-            if (modify.failed) {
-              context.commit("notify", {
-                title: get(modify.failed, model),
-                color: "error"
-              });
+            if (action.failed) {
+              context.commit("notify", {title: get(action.failed, model), color: "error"});
             }
           });
     }
-    const doWindowChain = ({window}, model) => {
+    const doWindowChain = (action, model) => {
+      const attribute = reactive({});
       const submit = reactive({});
+      const progress = ref(false);
+
       const doSubmitChain = value => {
         Promise.resolve()
             .then(() => {
-              submit.image = global["modal.submit.image.saving"];
-              submit.label = global["modal.submit.label.saving"];
-            })
-            .then(() => {
-              if (window.verify) {
-                return window.verify(value, context)
+              if (action.verify) {
+                return Promise.resolve()
+                    .then(() => {
+                      progress.value = true;
+                      submit.image = global["modal.submit.image.validating"];
+                      submit.label = global["modal.submit.label.validating"];
+                    })
+                    .then(() => action.verify(value, context))
                     .then(message => {
                       if (message != null) {
                         return Promise.reject(message);
@@ -75,60 +71,87 @@ export default {
               }
             })
             .then(() => {
-              if (window.stored) {
-                return window.stored(value, context);
+              if (action.stores) {
+                return Promise.resolve()
+                    .then(() => {
+                      progress.value = true;
+                      submit.image = global["modal.submit.image.saving"];
+                      submit.label = global["modal.submit.label.saving"];
+                    })
+                    .then(() => action.stores(value, context))
+                    .then(message => {
+                      if (message != null) {
+                        return Promise.reject(message);
+                      }
+                    });
               }
             })
             .then(() => {
-              if (window.inform) {
-                context.commit("notify", {title: window.inform, color: "info"});
+              if (action.inform) {
+                context.commit("notify", {title: action.inform, color: "info"});
               }
+              context.dispatch("window.hide", action.id);
             })
+            .then(() => action.update && fetch())
             .catch(error => {
               if (error != null) {
                 context.commit("notify", {title: error, color: "error"});
               }
             })
             .finally(() => {
-              // todo cancel loading
+              progress.value = false;
+              submit.image = global["modal.submit.image"];
+              submit.label = global["modal.submit.label"];
             })
       }
       const doCancelChain = () => {
         Promise.reject()
             .then(() => {
-              if (window.careful) {
+              if (action.cautious) {
                 return context.dispatch("window.once", {
-                  modally: true,
-                  content: get(window.careful, model)
+                  modally: true, content: get(action.cautious, model)
                 })
               }
             })
             .then(() => {
-              context.dispatch("window.hide", window.id)
+              context.dispatch("window.hide", action.id)
             })
       }
-      context.dispatch("window.open", {
-        id: window.id,
-        title: get(window.title, model),
-        sizes: window.sizes,
-        content: window.content,
-        submit,
-        onSubmit: doSubmitChain,
-        onCancel: doCancelChain,
-        attribute: {
-          value: window.transform ? window.transform(model) : model,
-          ...window.attribute
-        },
-      });
+
+      Promise.resolve()
+          .then(() => {
+            context.dispatch("window.open", {
+              id: action.id,
+              title: get(action.title, model),
+              sizes: action.sizes,
+              content: action.content,
+              onSubmit: doSubmitChain,
+              onCancel: doCancelChain,
+              submit,
+              progress,
+              attribute
+            })
+          })
+          .then(() => {
+            if (action.obtain) {
+              return Promise.resolve(progress.value = true)
+                  .then(() => action.obtain(model, context))
+                  .finally(() => progress.value = false);
+            }
+            return model;
+          })
+          .then(value => Object.assign(attribute, value));
     }
-    const doCustomChain = ({handle}, model) => {
-      handle(model, context, fetch);
+
+    const doCustomChain = (action, model) => {
+      Promise.resolve(action.handle(model, context))
+          .then(() => action.update && fetch());
     }
 
     const onActionHandler = (action, model = selections) => {
-      if (action.modify) return doModifyChain(action, model);
-      if (action.window) return doWindowChain(action, model);
-      if (action.handle) return doCustomChain(action, model);
+      if (action.handle === "modify") return doModifyChain(action, model);
+      if (action.handle === "window") return doWindowChain(action, model);
+      if (action.handle === "custom") return doCustomChain(action, model);
     }
 
     const fetch = (page, size) => {
@@ -137,69 +160,62 @@ export default {
       if (pagination && size > 0) pagination.size = size;
 
       loading.value = true;
-      error.value = false;
+      errored.value = false;
       source.call(null, {actives: props.actives, condition, pagination}, context)
           .then(ret => {
-            const lists = Array.isArray(ret) ? ret[0] : ret;
-            const paged = Array.isArray(ret) ? ret[1] : null;
-            data.splice(0, data.length, ...lists);
-            if (paged && pagination) {
-              pagination.count = paged.count;
-              pagination.total = paged.total;
+            const list = Array.isArray(ret) ? ret[0] : ret;
+            const page = Array.isArray(ret) ? ret[1] : null;
+            data.splice(0, data.length, ...list);
+            if (page && pagination) {
+              pagination.count = page.count;
+              pagination.total = page.total;
             }
           })
-          .catch(ex => error.value = true)
+          .catch(ex => errored.value = true)
           .finally(() => loading.value = false);
     }
 
     onMounted(() => {
-      if (source instanceof Function && options.immediate) fetch();
+      if (source instanceof Function && options.immediate) fetch(1);
     });
 
-    return () => h(resolveComponent("div"), {class: "explorer__managunit"}, [
-      // render menubar content
-      props.menubar &&
-      h(defineAsyncComponent(props.menubar.component),
-          {
+    return () => h(resolveComponent("div"), {class: "explorer__managunit"},
+        [
+          // render menubar content
+          props.menubar &&
+          h(defineAsyncComponent(props.menubar.component), {
             ...props.menubar.attribute,
             selections,
             data,
             onAction: onActionHandler
-          }
-      ),
-      // render heading content
-      props.heading &&
-      h(defineAsyncComponent(props.heading.component),
-          {
+          }),
+          // render heading content
+          props.heading &&
+          h(defineAsyncComponent(props.heading.component), {
             ...props.heading.attribute
-          }
-      ),
-      // render querier content
-      props.querier &&
-      h(defineAsyncComponent(props.querier.component),
-          {
+          }),
+          // render querier content
+          props.querier &&
+          h(defineAsyncComponent(props.querier.component), {
             ...props.querier.attribute,
             condition,
             selections,
             loading,
-            error,
+            errored,
             data,
             onAction: onActionHandler,
             onQuery: fetch
-          }
-      ),
-      // render real content
-      h(defineAsyncComponent(props.content.component),
-          {
+          }),
+          // render real content
+          h(defineAsyncComponent(props.content.component), {
             ...props.content.attribute,
             selections,
             pagination,
             loading,
-            error,
+            errored,
             data,
             onAction: onActionHandler
-          }
-      )
-    ])
+          })
+        ])
   }
 }

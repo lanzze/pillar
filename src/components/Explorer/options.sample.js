@@ -1,7 +1,8 @@
 export default {
   directory: {
-    component: () => import(""),
+    component: () => import("./ExpansionDirectory.js"),
     attribute: {
+      color: "primary",
       source: item => {
         return new Promise(resolve => {
           setTimeout(() => {
@@ -22,25 +23,26 @@ export default {
       mapping: {
         label: "label",
         value: "value",
-        items: "items",
-        caption: null
-      },
-    },
+        items: "items"
+      }
+    }
   },
   managunit: {
     basic: {
-      component: () => import(""),
+      component: () => import("./Managunit.js"),
       attribute: {
         heading: {
-          component: {},
+          component: () => import("./ClassicHeading.js"),
           attribute: {
             title: "get form item",
-            subtitle: ""
+            subtitle: "",
+            color: "primary"
           }
         },
         menubar: {
-          component: () => import(""),
-          options: {
+          component: () => import("./ClassicMenubar.js"),
+          attribute: {
+            color: "primary",
             items: [
               {
                 label: "",
@@ -52,46 +54,74 @@ export default {
           }
         },
         querier: {
-          component: () => import(""),
+          component: () => import("./ClassicQuerier.js"),
           attribute: {
+            color: "primary",
             mapping: {
               keyword: "keyword"
+            },
+            natives: {
+              keyword: {},
+              query: {}
             }
           }
         },
         content: {
-          component: () => import("./TableContent.vue"),
+          component: () => import("./ClassicTableContent.vue"),
           attribute: {
+            color: "primary",
             actions: [
               {
                 id: "test",
+                image: "",
+                title: "",
                 window: {
-                  stored: (model, context) => {
-
+                  obtain: (model, context) => Promise.resolve(model),
+                  stores: (model, context) => {
                   },
-                  verify: () => {
-
+                  verify: (model, context) => {
                   },
-                  careful: ""
-                },
+                  cautious: ""
+                }
+              },
+              {
+                id: "modify",
+                image: "",
+                title: "",
                 modify: {
                   notice: "",
                   inform: "",
                   failed: "",
                   update: false,
                   handle: (model, context) => {
-
                   }
-                },
-                handle: (model, context, refresh) => {
+                }
+              },
+              {
+                id: "custom",
+                image: "",
+                title: "",
+                handle: (model, context) => {
 
                 }
               }
             ],
-            natives: {}
+            natives: {},
+            handles: {
+              "row:click": {},
+              "row:dblclick": {}
+            },
+            dimensions: [
+              {
+                render: {
+                  component: "q-btn"
+                }
+              }
+            ]
           }
         },
         options: {
+          color: "primary",
           immediate: true,
           condition: {},
           pagination: {},
@@ -99,13 +129,14 @@ export default {
             return Promise.resolve([1, 2, 3]);
           }
         }
-      },
+      }
     },
     items: {
       [0]: {} // as basic
-    },
+    }
   },
   configure: {
-    itemkey: "id",
+    color: "primary",
+    itemkey: "id"
   }
 }
