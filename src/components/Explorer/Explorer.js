@@ -1,7 +1,8 @@
-import {h, computed}          from "vue";
-import {defineAsyncComponent} from "vue/dist/vue";
-import {assign}               from "loadsh"
-import {isCssColor}           from "./explorer.tools";
+import {ref}                  from "vue";
+import {provide}              from "vue";
+import {shallowRef}           from "vue";
+import {computed, h}          from "vue";
+import {defineAsyncComponent} from "vue";
 
 export default {
   props: {
@@ -13,36 +14,29 @@ export default {
   setup(props, context) {
     const config = props.config, directory = config.directory, managunit = config.managunit;
 
-    let selected = null, itemkey = config.configure.itemkey;
+    let selected = ref(null), itemkey = config.configure.itemkey;
     let optioned = computed(() => {
-      if (selected != null) {
-        let key = itemkey instanceof Function ? itemkey(selected) : itemkey;
+      if (selected.value != null) {
+        let key = itemkey instanceof Function ? itemkey(selected.value) : selected.value[itemkey];
         let options = managunit.items[key];
-        if (options != null) {
-          return assign({}, managunit.basic, managunit.items[key]);
+        if (options !== undefined) {
+          return Object.assign({}, managunit.basic, options);
         }
       }
     });
 
-    const css = isCssColor(config.color);
-    return h("div",
-        {
-          class: `explorer ${css ? undefined : config.color}`,
-          style: `background:${css ? css : undefined}`
-        },
+    provide("actives", selected);
+
+    return () => h("div", {class: "component explorer"},
         [
           directory && h(defineAsyncComponent(directory.component),
               {
-                attrs: directory.attribute,
-                on: {
-                  select: item => selected = item
-                }
+                ...directory.attribute,
+                onSelect: item => selected.value = item
               }
           ),
-          optioned && h(defineAsyncComponent(managunit.component),
-              {
-                attrs: optioned
-              }
+          optioned.value && h(defineAsyncComponent(optioned.value.component),
+              optioned.value.attribute
           )
         ])
   }

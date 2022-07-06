@@ -1,9 +1,9 @@
-.component\.modal {
+.component--modal {
   position: fixed;
   top: 0;
   left: 0;
 
-  &.maximum .modal\.body, &.maximum, &.modally {
+  &.maximum .modal--body, &.maximum, &.modally {
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
@@ -20,7 +20,7 @@
     z-index: -1;
   }
 
-  .modal\.body {
+  .modal--body {
     display: flex;
     flex: 1;
     border-radius: 0.3rem;
@@ -28,39 +28,39 @@
     box-shadow: 0.1rem 0.1rem 1.5rem 0.1rem rgba(64, 72, 191, 0.3);
   }
 
-  &.modally .modal\.body {
+  &.modally .modal--body {
     position: absolute;
   }
 
-  &.modally.auto:not(.maximum) .modal\.body {
+  &.modally.auto:not(.maximum) .modal--body {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
   }
 
-  &.modally.maximum .modal\.body {
+  &.modally.maximum .modal--body {
     width: 100% !important;
     height: 100% !important;
     left: 0 !important;
     top: 0 !important;
   }
 
-  .modal\.mover {
+  .modal--mover {
     cursor: move;
   }
 
-  .modal\.content {
+  .modal--content {
     flex: 1;
     display: flex;
     padding: 1rem;
   }
 }
 
-.window\.enter-active {
+.window--enter-active {
   animation: animate-window-enter-active 200ms cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
 
-.window\.leave-active {
+.window--leave-active {
   animation: animate-window-leave-active 200ms cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
 

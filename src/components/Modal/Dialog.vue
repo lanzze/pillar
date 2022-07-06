@@ -1,28 +1,24 @@
 <template>
   <div class="component modal dialog" :class="mainClass" :style="mainStyle">
-    <div ref="body" class="modal.body" :style="bodyStyle" @mousedown.stop="onMouseDown($event,'body')">
-      <div class="modal.header" @mousedown.stop="onMouseDown($event,'header')" v-if="!!header">
+    <div ref="body" class="modal--body" :style="bodyStyle" @mousedown.stop="onMouseDown($event,'body')">
+      <div class="modal--header" @mousedown.stop="onMouseDown($event,'header')" v-if="!!header">
         <slot name="header">
-          <div class="modal.header.icon" v-if="!!icon">
+          <div class="header--icon" v-if="!!icon">
             <i class="icon" :class="icon"></i>
           </div>
-          <div class="modal.header.title">
+          <div class="header--title">
             <slot name="title">{{title}}</slot>
           </div>
-          <div class="modal.header.control" v-if="!!maximizer||!!closer">
-            <button @click="switchMaximum" v-if="!!maximizer">
-              <i :class="options['modal.icon.maximum']"></i>
-            </button>
-            <button @click.stop="onCancel" v-if="!!closer">
-              <i :class="options['modal.icon.closer']"></i>
-            </button>
+          <div class="header--control" v-if="!!maximizer||!!closer">
+            <q-btn @click="switchMaximum" v-if="!!maximizer"></q-btn>
+            <q-btn @click.stop="onCancel" v-if="!!closer"></q-btn>
           </div>
         </slot>
       </div>
-      <div class="modal.content" :class="contentClass">
+      <div class="modal--content" :class="contentClass">
         <slot></slot>
       </div>
-      <div class="modal.footer" v-if="!!footer">
+      <div class="modal--footer" v-if="!!footer">
         <slot name="footer">
           <q-btn :icon="cancel.image"
                  :color="cancel.color"
@@ -105,18 +101,18 @@ export default {
       submit: props.submit === false ? false : Object.assign(reactive({
         label: options["modal.submit.label"],
         color: options["modal.submit.color"],
-        image: options["modal.submit.image"],
+        image: options["modal.submit.image"]
       }), props.submit),
       
       cancel: props.submit === false ? false : Object.assign(reactive({
         label: options["modal.cancel.label"],
         color: options["modal.cancel.color"],
-        image: options["modal.cancel.image"],
+        image: options["modal.cancel.image"]
       }), props.cancel),
       
       progressor: {
         component: options["modal.progress"],
-        attribute: options["modal.progress.native"],
+        attribute: options["modal.progress.native"]
       },
       
       onMouseDown(event, target) {
@@ -124,8 +120,8 @@ export default {
           this.down(event);
         }
       },
-      onCancel: () => context.$emit("cancel"),
-      onSubmit: () => context.$emit("submit")
+      onCancel: () => context.emit("cancel"),
+      onSubmit: () => context.emit("submit")
     }
   }
 }

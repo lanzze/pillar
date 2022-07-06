@@ -1,4 +1,4 @@
-import {ref, renderSlot}  from "vue";
+import {ref}              from "vue";
 import {onBeforeMount}    from "vue";
 import {resolveComponent} from "vue";
 import {h, reactive}      from "vue";
@@ -6,22 +6,25 @@ import {h, reactive}      from "vue";
 export default {
   name: "ExpansionDirectory",
   props: {
+    color: String,
     source: [Function, Array],
     mapping: Object
   },
+  emits: ["select"],
   setup(props, context) {
+    debugger
     const mapping = props.mapping;
     const loading = ref(false);
-    const error = ref(false);
+    const errored = ref(false);
     const remote = props.source instanceof Function;
     const items = reactive(remote ? [] : props.source.slice());
 
     const fetch = (item, children) => {
       loading.value = true;
-      error.value = false;
+      errored.value = false;
       props.source(item)
           .then(data => children.push(...data))
-          .catch(() => error.value = true)
+          .catch(() => errored.value = true)
           .finally(() => loading.value = false);
     }
 
@@ -32,15 +35,17 @@ export default {
       }
       context.emit("select", item);
     }
+
     const convert = (item) => {
       return h(resolveComponent("q-expansion-item"), {
-            ...props.natives,
+            ...props.native,
             key: item[mapping.value],
             label: item[mapping.label],
             caption: item[mapping.caption],
             icon: item[mapping.icon],
-            "expand-separator": true,
-            "onclick": () => onItemClick(item),
+            "active-class": "text--primary",
+            "expand-icon-toggle": false,
+            "onclick": () => onItemClick(item)
           },
           item[mapping.items] ? item[mapping.items].map(e => convert(e)) : undefined
       );
@@ -49,10 +54,11 @@ export default {
     onBeforeMount(() => {
       if (remote) fetch(null, items)
     });
-
     return () => h("div",
-        {class: "explorer__directory__expansion"},
-        [h(resolveComponent("q-list"), {}, items.map(e => convert(e)))]
+        {
+          class: "explorer directory expansion"
+        },
+        [h(resolveComponent("q-list"), items.map(e => convert(e)))]
     );
   }
 }

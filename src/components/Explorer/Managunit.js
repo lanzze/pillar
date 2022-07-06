@@ -1,7 +1,11 @@
+import {inject}                                 from "vue";
+import {provide}                                from "vue";
 import {reactive, ref}                          from "vue";
 import {defineAsyncComponent, resolveComponent} from "vue";
 import {h}                                      from "vue";
 import {onMounted}                              from "vue";
+import {useStore}                               from "vuex";
+import {get}                                    from "./explorer.tools";
 import global                                   from "../component.options";
 
 export default {
@@ -9,9 +13,10 @@ export default {
     menubar: Object,
     heading: Object,
     querier: Object,
+    comment: Object,
     content: Object,
-    options: Object,
-    actives: Object
+    summary: Object,
+    options: Object
   },
   setup(props, context) {
     const options    = props.options,
@@ -20,34 +25,41 @@ export default {
           pagination = options.pagination,
           loading    = ref(false),
           errored    = ref(false),
+          selection  = reactive([]),
           data       = Array.isArray(source) ? source : reactive([]);
-    const selections = reactive([]);
 
-    const get = (target, ...args) => {
-      return target instanceof Function ? target(...args) : target;
-    }
+    const actives = inject("actives", null);
+    const store = useStore();
 
-    const doModifyChain = (action, model) => {
+    provide("selection", selection);
+    provide("condition", condition);
+    provide("pagination", pagination);
+    provide("loading", loading);
+    provide("errored", errored);
+    provide("data", data);
+
+
+    const doModifyChain = (options, model) => {
       Promise.resolve()
           .then(() => {
-            if (action.notice) {
-              return context.dispatch("window.once", {modally: true, content: action.notice});
+            if (options.notice) {
+              return store.dispatch("window.once", {modally: true, content: options.notice});
             }
           })
-          .then(() => action.handle(model, context))
+          .then(() => options.handle(model, store))
           .then(() => {
-            if (action.inform) {
-              context.commit("notify", {title: get(action.inform, model), color: "success"});
+            if (options.inform) {
+              store.commit("notify", {title: get(options.inform, model), color: "success"});
             }
           })
-          .then(() => action.update && fetch())
+          .then(() => options.update && fetch())
           .catch(() => {
-            if (action.failed) {
-              context.commit("notify", {title: get(action.failed, model), color: "error"});
+            if (options.failed) {
+              store.commit("notify", {title: get(options.failed, model), color: "error"});
             }
           });
     }
-    const doWindowChain = (action, model) => {
+    const doWindowChain = (options, model) => {
       const attribute = reactive({});
       const submit = reactive({});
       const progress = ref(false);
@@ -55,14 +67,14 @@ export default {
       const doSubmitChain = value => {
         Promise.resolve()
             .then(() => {
-              if (action.verify) {
+              if (options.verify) {
                 return Promise.resolve()
                     .then(() => {
                       progress.value = true;
                       submit.image = global["modal.submit.image.validating"];
                       submit.label = global["modal.submit.label.validating"];
                     })
-                    .then(() => action.verify(value, context))
+                    .then(() => options.verify(value, context))
                     .then(message => {
                       if (message != null) {
                         return Promise.reject(message);
@@ -71,14 +83,14 @@ export default {
               }
             })
             .then(() => {
-              if (action.stores) {
+              if (options.stores) {
                 return Promise.resolve()
                     .then(() => {
                       progress.value = true;
                       submit.image = global["modal.submit.image.saving"];
                       submit.label = global["modal.submit.label.saving"];
                     })
-                    .then(() => action.stores(value, context))
+                    .then(() => options.stores(value, context))
                     .then(message => {
                       if (message != null) {
                         return Promise.reject(message);
@@ -87,15 +99,15 @@ export default {
               }
             })
             .then(() => {
-              if (action.inform) {
-                context.commit("notify", {title: action.inform, color: "info"});
+              if (options.inform) {
+                store.commit("notify", {title: options.inform, color: "info"});
               }
-              context.dispatch("window.hide", action.id);
+              store.dispatch("window.hide", options.id);
             })
-            .then(() => action.update && fetch())
+            .then(() => options.update && fetch())
             .catch(error => {
               if (error != null) {
-                context.commit("notify", {title: error, color: "error"});
+                store.commit("notify", {title: error, color: "error"});
               }
             })
             .finally(() => {
@@ -107,24 +119,24 @@ export default {
       const doCancelChain = () => {
         Promise.reject()
             .then(() => {
-              if (action.cautious) {
-                return context.dispatch("window.once", {
-                  modally: true, content: get(action.cautious, model)
+              if (options.cancel) {
+                return store.dispatch("window.once", {
+                  modally: true, content: get(options.cancel, model)
                 })
               }
             })
             .then(() => {
-              context.dispatch("window.hide", action.id)
+              store.dispatch("window.hide", options.id)
             })
       }
 
       Promise.resolve()
           .then(() => {
-            context.dispatch("window.open", {
-              id: action.id,
-              title: get(action.title, model),
-              sizes: action.sizes,
-              content: action.content,
+            store.dispatch("window.open", {
+              id: options.id,
+              title: get(options.title, model),
+              sizes: options.sizes,
+              content: options.content,
               onSubmit: doSubmitChain,
               onCancel: doCancelChain,
               submit,
@@ -133,25 +145,27 @@ export default {
             })
           })
           .then(() => {
-            if (action.obtain) {
+            if (options.obtain) {
               return Promise.resolve(progress.value = true)
-                  .then(() => action.obtain(model, context))
+                  .then(() => options.obtain(model, store))
                   .finally(() => progress.value = false);
             }
             return model;
           })
-          .then(value => Object.assign(attribute, value));
+          .then(value => {
+            return options.toAttr ? options.toAttr(value) : {value};
+          })
+          .then(attrs => Object.assign(attribute, attrs));
+    }
+    const doCustomChain = (options, model) => {
+      Promise.resolve(options.handle(model, store))
+          .then(() => options.update && fetch());
     }
 
-    const doCustomChain = (action, model) => {
-      Promise.resolve(action.handle(model, context))
-          .then(() => action.update && fetch());
-    }
-
-    const onActionHandler = (action, model = selections) => {
-      if (action.handle === "modify") return doModifyChain(action, model);
-      if (action.handle === "window") return doWindowChain(action, model);
-      if (action.handle === "custom") return doCustomChain(action, model);
+    const onActionHandler = (action, model = selection) => {
+      if (action.modify) return doModifyChain(action.modify, model);
+      if (action.window) return doWindowChain(action.window, model);
+      if (action.custom) return doCustomChain(action.custom, model);
     }
 
     const fetch = (page, size) => {
@@ -161,7 +175,7 @@ export default {
 
       loading.value = true;
       errored.value = false;
-      source.call(null, {actives: props.actives, condition, pagination}, context)
+      source.call(null, {actives, condition, pagination}, context)
           .then(ret => {
             const list = Array.isArray(ret) ? ret[0] : ret;
             const page = Array.isArray(ret) ? ret[1] : null;
@@ -179,14 +193,12 @@ export default {
       if (source instanceof Function && options.immediate) fetch(1);
     });
 
-    return () => h(resolveComponent("div"), {class: "explorer__managunit"},
+    return () => h(resolveComponent("div"), {class: "component managunit"},
         [
           // render menubar content
           props.menubar &&
           h(defineAsyncComponent(props.menubar.component), {
             ...props.menubar.attribute,
-            selections,
-            data,
             onAction: onActionHandler
           }),
           // render heading content
@@ -198,22 +210,24 @@ export default {
           props.querier &&
           h(defineAsyncComponent(props.querier.component), {
             ...props.querier.attribute,
-            condition,
-            selections,
-            loading,
-            errored,
-            data,
             onAction: onActionHandler,
             onQuery: fetch
+          }),
+          // render comment content
+          props.comment &&
+          h(defineAsyncComponent(props.comment.component), {
+            ...props.comment.attribute,
+            onAction: onActionHandler
           }),
           // render real content
           h(defineAsyncComponent(props.content.component), {
             ...props.content.attribute,
-            selections,
-            pagination,
-            loading,
-            errored,
-            data,
+            onAction: onActionHandler
+          }),
+          // render summary content
+          props.summary &&
+          h(defineAsyncComponent(props.summary.component), {
+            ...props.summary.attribute,
             onAction: onActionHandler
           })
         ])

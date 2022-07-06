@@ -1,27 +1,26 @@
+import {inject}           from "vue";
 import {h}                from "vue";
 import {resolveComponent} from "vue";
 
 export default {
   props: {
-    condition: Object,
-    selections: Array,
-    loading: Boolean,
-    error: Boolean,
-    mapping: Object,
-    natives: Object,
+    color: String,
+    field: String,
+    natives: Object
   },
+  emits: ["query"],
   setup(props, context) {
+    const condition = inject("condition");
 
-    return () => h("div", {class: "explorer__managunit__querier"},
+    return () => h("div", {class: "managunit querier"},
         [
           h(resolveComponent("q-input"), {
+            class: "querier--keyword",
             ...props.natives.keyword,
-            modelValue: props.condition[props.mapping.keyword],
-            "update:model-value": value => props.condition[props.mapping.keyword] = value
+            modelValue: condition[props.field],
+            "update:model-value": value => condition[props.field] = value
           }),
-
-          h("div", {class: "explorer__managunit__querier-splitter"}),
-
+          h("div", {class: "querier--splitter"}),
           h(resolveComponent("q-btn"), {
             ...props.natives.query,
             onclick: () => context.emit("query")

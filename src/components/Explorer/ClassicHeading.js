@@ -1,22 +1,25 @@
+import {inject}           from "vue";
 import {resolveComponent} from "vue";
 import {h}                from "vue";
+import {get}              from "./explorer.tools";
 
 export default {
   props: {
-    item: Object,
     title: [String, Function],
     subtitle: [String, Function]
   },
   setup(props, context) {
-    const get = target => target instanceof Function ? target(props.item) : target;
-    return () => h("div", {class: "explorer__managunit__heading"},
+    const actives = inject("actives", null);
+    return () => h("div", {class: "managunit heading classic"},
         [
           h(resolveComponent("div"), {
-            class: "explorer__managunit__heading--title"
-          }, get(props.title)),
+            class: "heading--title"
+          }, get(props.title, actives)),
+
+          props.subtitle &&
           h(resolveComponent("div"), {
-            class: "explorer__managunit__heading--subtitle"
-          }, get(props.subtitle)),
+            class: "heading--subtitle"
+          }, get(props.subtitle, actives))
         ]
     );
   }

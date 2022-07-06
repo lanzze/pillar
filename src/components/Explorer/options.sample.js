@@ -1,25 +1,173 @@
+const rows = [
+  {
+    name: 'Frozen Yogurt',
+    calories: 159,
+    fat: 6.0,
+    carbs: 24,
+    protein: 4.0,
+    sodium: 87,
+    calcium: '14%',
+    iron: '1%'
+  },
+  {
+    name: 'Ice cream sandwich',
+    calories: 237,
+    fat: 9.0,
+    carbs: 37,
+    protein: 4.3,
+    sodium: 129,
+    calcium: '8%',
+    iron: '1%'
+  },
+  {
+    name: 'Eclair',
+    calories: 262,
+    fat: 16.0,
+    carbs: 23,
+    protein: 6.0,
+    sodium: 337,
+    calcium: '6%',
+    iron: '7%'
+  },
+  {
+    name: 'Cupcake',
+    calories: 305,
+    fat: 3.7,
+    carbs: 67,
+    protein: 4.3,
+    sodium: 413,
+    calcium: '3%',
+    iron: '8%'
+  },
+  {
+    name: 'Gingerbread',
+    calories: 356,
+    fat: 16.0,
+    carbs: 49,
+    protein: 3.9,
+    sodium: 327,
+    calcium: '7%',
+    iron: '16%'
+  },
+  {
+    name: 'Jelly bean',
+    calories: 375,
+    fat: 0.0,
+    carbs: 94,
+    protein: 0.0,
+    sodium: 50,
+    calcium: '0%',
+    iron: '0%'
+  },
+  {
+    name: 'Lollipop',
+    calories: 392,
+    fat: 0.2,
+    carbs: 98,
+    protein: 0,
+    sodium: 38,
+    calcium: '0%',
+    iron: '2%'
+  },
+  {
+    name: 'Honeycomb',
+    calories: 408,
+    fat: 3.2,
+    carbs: 87,
+    protein: 6.5,
+    sodium: 562,
+    calcium: '0%',
+    iron: '45%'
+  },
+  {
+    name: 'Donut',
+    calories: 452,
+    fat: 25.0,
+    carbs: 51,
+    protein: 4.9,
+    sodium: 326,
+    calcium: '2%',
+    iron: '22%'
+  },
+  {
+    name: 'KitKat',
+    calories: 518,
+    fat: 26.0,
+    carbs: 65,
+    protein: 7,
+    sodium: 54,
+    calcium: '12%',
+    iron: '6%'
+  }
+]
+const columns = [
+  {
+    name: "seq",
+    label: "Seq"
+  },
+  {
+    name: 'name',
+    required: true,
+    label: 'Dessert (100g serving)',
+    align: 'left',
+    field: row => row.name,
+    format: val => `${val}`,
+    sortable: true,
+    render: {
+      component: () => import("./HighlightRender.js"),
+      attribute: {
+        color: "primary",
+        value: v => v.name
+      }
+    }
+  },
+  {name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true},
+  {name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true},
+  {name: 'carbs', label: 'Carbs (g)', field: 'carbs'},
+  {name: 'protein', label: 'Protein (g)', field: 'protein'},
+  {name: 'sodium', label: 'Sodium (mg)', field: 'sodium'},
+  {name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)},
+  {name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)},
+  {label: "Action"}
+]
 export default {
   directory: {
     component: () => import("./ExpansionDirectory.js"),
     attribute: {
       color: "primary",
-      source: item => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve([
-              {
-                label: Math.random()
-              },
-              {
-                label: Math.random()
-              },
-              {
-                label: Math.random()
-              }
-            ])
-          }, 500)
-        })
-      },
+      // source: item => {
+      //   return new Promise(resolve => {
+      //     resolve([
+      //       {
+      //         value: 1,
+      //         label: "气象快报"
+      //       },
+      //       {
+      //         value: 2,
+      //         label: "水情简报"
+      //       },
+      //       {
+      //         value: 2,
+      //         label: "风险简报"
+      //       }
+      //     ])
+      //   })
+      // },
+      source: [
+        {
+          value: 1,
+          label: "气象快报"
+        },
+        {
+          value: 2,
+          label: "水情简报"
+        },
+        {
+          value: 3,
+          label: "风险简报"
+        }
+      ],
+      native: {},
       mapping: {
         label: "label",
         value: "value",
@@ -31,38 +179,39 @@ export default {
     basic: {
       component: () => import("./Managunit.js"),
       attribute: {
-        heading: {
-          component: () => import("./ClassicHeading.js"),
-          attribute: {
-            title: "get form item",
-            subtitle: "",
-            color: "primary"
-          }
-        },
         menubar: {
           component: () => import("./ClassicMenubar.js"),
           attribute: {
             color: "primary",
             items: [
               {
-                label: "",
-                title: "",
-                color: "",
+                label: "添加",
+                color: "primary",
                 native: {}
               }
             ]
+          }
+        },
+        heading: {
+          component: () => import("./ClassicHeading.js"),
+          attribute: {
+            title: v => v.label,
+            subtitle: "",
+            color: "primary"
           }
         },
         querier: {
           component: () => import("./ClassicQuerier.js"),
           attribute: {
             color: "primary",
-            mapping: {
-              keyword: "keyword"
-            },
+            field: "keyword",
             natives: {
-              keyword: {},
-              query: {}
+              keyword: {
+                label: "输入关键字"
+              },
+              query: {
+                label: "查询"
+              }
             }
           }
         },
@@ -70,18 +219,25 @@ export default {
           component: () => import("./ClassicTableContent.vue"),
           attribute: {
             color: "primary",
+            sequence: true,
             actions: [
               {
                 id: "test",
-                image: "",
+                size: "xs",
+                image: undefined,
                 title: "",
+                label: "Edit",
+                color: "primary",
+                disable: e => e.calories > 300,
                 window: {
+                  content: "Hello",
+                  cancel: "",
                   obtain: (model, context) => Promise.resolve(model),
                   stores: (model, context) => {
                   },
                   verify: (model, context) => {
                   },
-                  cautious: ""
+                  toAttr: model => model
                 }
               },
               {
@@ -101,9 +257,13 @@ export default {
                 id: "custom",
                 image: "",
                 title: "",
-                handle: (model, context) => {
-
+                custom: {
+                  update: false,
+                  handle: (model, context) => {
+                    alert(0)
+                  }
                 }
+
               }
             ],
             natives: {},
@@ -111,32 +271,29 @@ export default {
               "row:click": {},
               "row:dblclick": {}
             },
-            dimensions: [
-              {
-                render: {
-                  component: "q-btn"
-                }
-              }
-            ]
+            dimensions: columns
           }
         },
+        comment: null,
+        summary: null,
         options: {
           color: "primary",
           immediate: true,
           condition: {},
-          pagination: {},
+          pagination: {page: 1, size: 15, count: 20, length: 10},
           source: ({item, condition, pagination}, store) => {
-            return Promise.resolve([1, 2, 3]);
+            return Promise.resolve([rows, {page: 1, size: 10, count: 100}]);
           }
         }
       }
     },
     items: {
-      [0]: {} // as basic
+      [1]: {}, // as basic
+      [2]: {} // as basic
     }
   },
   configure: {
     color: "primary",
-    itemkey: "id"
+    itemkey: "value"
   }
 }

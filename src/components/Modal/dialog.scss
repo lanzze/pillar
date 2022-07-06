@@ -1,22 +1,18 @@
 .component.modal {
 
-  * {
-    //border: 1px solid red;
-  }
-
-  .modal\.body {
+  .modal--body {
     display: flex;
     flex-direction: column;
   }
 
-  .modal\.header {
+  .modal--header {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 3rem;
   }
 
-  .modal\.header\.icon {
+  .header--icon {
     width: 3rem;
     height: 100%;
     display: flex;
@@ -24,12 +20,12 @@
     justify-content: center;
   }
 
-  .modal\.header\.icon .icon {
+  .header--icon .icon {
     width: 2rem;
     height: 2rem;
   }
 
-  .modal\.header\.control {
+  .header--control {
     height: 100%;
     display: flex;
     align-items: center;
@@ -37,16 +33,16 @@
     padding: 0 0.5rem;
   }
 
-  .modal\.header\.control > button {
+  .header--control > button {
     width: 2rem;
     height: 2rem;
   }
 
-  .modal\.header\.control > button:not(:first-child) {
+  .header--control > button:not(:first-child) {
     margin-left: 0.5rem;
   }
 
-  .modal\.header\.title {
+  .header--title {
     flex: 1;
     height: 100%;
     display: flex;
@@ -55,14 +51,14 @@
     cursor: default;
   }
 
-  .modal\.footer {
+  .modal--footer {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 4rem;
   }
 
-  .modal\.footer > button {
+  .modal--footer > button {
     height: 2.3rem;
     margin: 0 1rem;
     min-width: 7rem;

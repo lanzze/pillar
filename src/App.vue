@@ -1,32 +1,22 @@
 <template>
-  <!--<Test :names="names"></Test>-->
-  <!--<router-view></router-view>-->
   <Windows :items="windows.items" :front="windows.front" :layer="windows.layer"></Windows>
-  <!--<q-btn color="primary">This is a button?</q-btn>-->
-  <!--<ElementForm :model="model" :form="sample.form"></ElementForm>-->
-  <!--<Dialog title="Test" maximizer modally>-->
-  <!--  This is a simple content.-->
-  <!--  That means you don't to know the details.-->
-  <!--</Dialog>-->
   
-  <!--<ExpansionDirectory v-bind="sample.directory.attribute"></ExpansionDirectory>-->
-  <q-btn @[event]="onEvent"></q-btn>
+  <Explorer :config="sample"></Explorer>
 </template>
 
 <script>
 
-import {mapState}         from "vuex";
-import ExpansionDirectory from "./components/Explorer/ExpansionDirectory";
-import Dialog             from "./components/Modal/Dialog.vue";
-import Windows            from "./components/Windows/Windows";
-import SlotsTest          from "./SlotsTest";
-import Test               from "./Test.js";
-import sample             from "./components/Explorer/options.sample"
+import {mapState} from "vuex";
+import Explorer   from "./components/Explorer/Explorer.js";
+import Dialog     from "./components/Modal/Dialog.vue";
+import Windows    from "./components/Windows/Windows";
+import sample     from "./components/Explorer/options.sample"
 
 export default {
-  components: {SlotsTest, ExpansionDirectory, Test, Dialog, Windows},
+  components: {Explorer, Dialog, Windows},
   data() {
     return {
+      tab: 0,
       event: "click",
       sample,
       names: [],
@@ -78,7 +68,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   font-size: 20px;
 }
 
@@ -97,5 +86,26 @@ export default {
 
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+.explorer.component {
+  width: 100vw;
+  height: 100vh;
+}
+
+.modal--header {
+  height: 42px;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(to right, #438e9c, #438e9c);
+}
+
+.modal--body {
+  box-shadow: 0.1rem 0.1rem 1.5rem 0.1rem #32a0a444;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.modal--content {
+
 }
 </style>
