@@ -10,8 +10,8 @@
             <slot name="title">{{title}}</slot>
           </div>
           <div class="header--control" v-if="!!maximizer||!!closer">
-            <q-btn @click="switchMaximum" v-if="!!maximizer"></q-btn>
-            <q-btn @click.stop="onCancel" v-if="!!closer"></q-btn>
+            <q-icon @click.stop="switchMaximum" size="xs" fab v-ripple v-if="!!maximizer"></q-icon>
+            <q-icon @click.stop="onCancel" size="20" fab v-ripple v-if="!!closer"></q-icon>
           </div>
         </slot>
       </div>
@@ -27,14 +27,19 @@
                  @click.stop="onCancel"
                  v-if="!!cancel">
           </q-btn>
-          <q-btn :icon="submit.image"
+          <q-btn :icon="progress?undefined:submit.image"
                  :color="submit.color"
                  :label="submit.label"
                  :loading="progress"
                  v-bind="submit.native"
+                 :disable="!validation || progress"
                  @click.stop="onSubmit" v-if="!!submit">
             <template v-slot:loading>
-              <component :is="progressor.component" v-bind="progressor.attribute"></component>
+              <component :is="progresser.component"
+                         :color="submit.color"
+                         :name="submit.image"
+                         v-bind="progresser.attribute"></component>
+              {{submit.label}}
             </template>
           </q-btn>
         </slot>
@@ -43,9 +48,11 @@
   </div>
 </template>
 <script>
+import {computed} from "vue";
+import {watch}    from "vue";
 import {reactive} from "vue";
-import Overlay    from "./Overlay";
 import options    from "../component.options";
+import Overlay    from "./Overlay";
 
 let zIndex = 333333;
 export default {
@@ -98,23 +105,26 @@ export default {
   },
   setup(props, context) {
     return {
-      submit: props.submit === false ? false : Object.assign(reactive({
-        label: options["modal.submit.label"],
-        color: options["modal.submit.color"],
-        image: options["modal.submit.image"]
-      }), props.submit),
-      
-      cancel: props.submit === false ? false : Object.assign(reactive({
-        label: options["modal.cancel.label"],
-        color: options["modal.cancel.color"],
-        image: options["modal.cancel.image"]
-      }), props.cancel),
-      
-      progressor: {
+      submit: computed(() => {
+        return props.submit === false ? false : {
+          label: options["modal.submit.label"],
+          color: options["modal.submit.color"],
+          image: options["modal.submit.image"],
+          ...props.submit
+        }
+      }),
+      cancel: computed(() => {
+        return props.cancel === false ? false : {
+          label: options["modal.cancel.label"],
+          color: options["modal.cancel.color"],
+          image: options["modal.cancel.image"],
+          ...props.cancel
+        }
+      }),
+      progresser: {
         component: options["modal.progress"],
         attribute: options["modal.progress.native"]
       },
-      
       onMouseDown(event, target) {
         if (props.movable === target) {
           this.down(event);

@@ -25,5 +25,6 @@ app.use(Quasar, quasarUserOptions);
 app.use(store);
 app.use(router);
 app.use(plugin);
+Quasar.iconSet.set(Quasar.iconSet.mdiV6);
 app.mount('#app');
 

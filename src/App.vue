@@ -1,19 +1,21 @@
 <template>
   <Windows :items="windows.items" :front="windows.front" :layer="windows.layer"></Windows>
   
+  <!--<CH :config="sample"></CH>-->
   <Explorer :config="sample"></Explorer>
 </template>
 
 <script>
 
 import {mapState} from "vuex";
+import CH         from "./components/CH.vue";
 import Explorer   from "./components/Explorer/Explorer.js";
 import Dialog     from "./components/Modal/Dialog.vue";
 import Windows    from "./components/Windows/Windows";
 import sample     from "./components/Explorer/options.sample"
 
 export default {
-  components: {Explorer, Dialog, Windows},
+  components: {CH, Explorer, Dialog, Windows},
   data() {
     return {
       tab: 0,

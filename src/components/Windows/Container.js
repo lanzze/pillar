@@ -7,7 +7,7 @@ export default {
   name: "Container",
   props: {
     zIndex: [Number, ref],
-    options: Object,
+    options: Object
   },
   setup(props, context) {
     let model = null;
@@ -33,10 +33,11 @@ export default {
 
     const options = props.options;
     const isComponent = options.content instanceof Function;
+    const component = isComponent ? defineAsyncComponent(options.content) : undefined;
     return () => h(Transition, {
       appear: true,
-      "enter-active-class": options.animation?.enter || "window.enter-active",
-      "leave-active-class": options.animation?.leave || "window.leave-active",
+      "enter-active-class": options.animation?.enter || "window--enter-active",
+      "leave-active-class": options.animation?.leave || "window--leave-active"
     }, [h(Dialog, {
           icon: options.icon,
           sizes: options.sizes,
@@ -49,15 +50,15 @@ export default {
           submit: options.submit,
           modally: options.modally,
           maximum: options.maximum,
-          maximizer: options.maximizer,
-          validation: validation.value,
+          progress: options.progress,
+          validation,
           zIndex: isRef(props.zIndex) ? props.zIndex.value : props.zIndex,
           onSubmit,
           onCancel,
-          ...options.modal
+          ...options.modals
         },
         [isComponent ?
-            h(defineAsyncComponent(options.content), {
+            h(component, {
               ...options.attrs,
               onSubmit,
               onCancel,

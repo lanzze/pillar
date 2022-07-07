@@ -1,29 +1,32 @@
+import Progresser from "./Modal/Progresser.js";
+
 const options = {
   "framework": "quasar",
   "modal.maximum.icon": "mdi-window-maximize",
   "modal.minimum.icon": "mdi-minus",
   "modal.closer.icon": "mdi-close-circle",
-  "modal.cancel.image": null,
-  "modal.cancel.label": "white",
-  "modal.cancel.color": "white",
+  "modal.cancel.image": undefined,
+  "modal.cancel.label": "取消",
+  "modal.cancel.color": "warning",
   "modal.cancel.native": {},
 
-  "modal.submit.image": "white",
-  "modal.submit.label": "white",
-  "modal.submit.color": "white",
+  "modal.submit.image": undefined,
+  "modal.submit.label": "提交",
+  "modal.submit.color": "primary",
   "modal.submit.native": {},
 
-  "modal.progress": "q-spinner",
-  "modal.progress.native": {},
+  // "modal.progress": "q-icon",
+  "modal.progress": Progresser,
+  "modal.progress.native": {color: "white", size: "23px"},
 
-  "modal.submit.label.loading": "white",
-  "modal.submit.image.loading": "white",
+  "modal.submit.label.loading": "加载中...",
+  "modal.submit.image.loading": "hourglass",
 
-  "modal.submit.label.saving": "white",
-  "modal.submit.image.saving": "white",
+  "modal.submit.label.saving": "保存中...",
+  "modal.submit.image.saving": "hourglass",
 
-  "modal.submit.label.validating": "white",
-  "modal.submit.image.validating": "white"
+  "modal.submit.label.validating": "验证中...",
+  "modal.submit.image.validating": "hourglass"
 
 };
 

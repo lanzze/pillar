@@ -1,5 +1,5 @@
 <template>
-
+  <div>Editor</div>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
       type: String,
       default: "view",
       validator: v => ["view", "edit", "new"].indexOf(v) > -1
-    },
+    }
   },
   data() {
     return {dynamicSubmit: null}
@@ -26,6 +26,6 @@ export default {
         this.dynamicSubmit = value;
       }
     }
-  },
+  }
 }
 </script>

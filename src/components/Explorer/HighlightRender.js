@@ -4,17 +4,19 @@ import {get}              from "./explorer.tools";
 
 export default {
   name: "HighlightRender",
-  props: ["model", "native", "click", "color", "fontColor", "value"],
+  props: ["model", "label", "title", "click", "color", "fontColor", "native"],
   emits: ["action"],
   setup(props, context) {
     return () => h(resolveComponent("q-chip"),
         {
-          ...props.native,
+          class: props.click ? "cursor-pointer" : undefined,
           textColor: props.fontColor || "white",
           color: get(props.color, props.model),
-          onclick: () => props.click && context.emit("action", props.click)
+          title: get(props.title, props.model),
+          ...props.native,
+          "onclick.stop": () => props.click && context.emit("action", props.click)
         },
-        {default: () => get(props.value, props.model)}
+        {default: () => get(props.label, props.model)}
     )
   }
 }

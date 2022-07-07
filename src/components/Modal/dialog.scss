@@ -12,6 +12,10 @@
     height: 3rem;
   }
 
+  .modal--content {
+    flex: 1;
+  }
+
   .header--icon {
     width: 3rem;
     height: 100%;
@@ -49,6 +53,7 @@
     align-items: center;
     justify-content: center;
     cursor: default;
+    font-size: 1.2rem;
   }
 
   .modal--footer {
@@ -59,13 +64,14 @@
   }
 
   .modal--footer > button {
-    height: 2.3rem;
-    margin: 0 1rem;
-    min-width: 7rem;
-    letter-spacing: 1rem;
-    padding-left: 1.3rem;
-    font-size: 1rem;
+    min-width: 8rem;
+    font-size: 1.1rem;
     font-weight: 500;
     border: 0;
+    margin: 0 10px;
+  }
+
+  .dialog--progresser, .modal--footer .q-icon {
+    margin-right: 5px;
   }
 }

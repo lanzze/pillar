@@ -12,7 +12,6 @@ export default {
   },
   emits: ["select"],
   setup(props, context) {
-    debugger
     const mapping = props.mapping;
     const loading = ref(false);
     const errored = ref(false);

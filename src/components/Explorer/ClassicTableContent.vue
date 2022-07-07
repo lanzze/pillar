@@ -36,7 +36,7 @@
                      fab
                      :disable="disableOf(row,e)"
                      v-bind="e.native"
-                     @click="onActionHandler(row,e)"
+                     @click.stop="onActionHandler(row,e)"
                      v-if="visibleOf(row,e)"></q-btn>
             </template>
           </td>
@@ -100,7 +100,14 @@ export default {
       data,
       defineAsyncComponent,
       onVirtualScroll,
-      onActionHandler: (row, action) => context.emit("action", action, row),
+      onActionHandler: (row, action) => {
+        if (typeof action === "string") {
+          action = props.actions.find(e => e.id === action);
+        }
+        if (action != null) {
+          context.emit("action", action, row)
+        }
+      },
       onTableEvent: (row, name) => {
         let handler = props.handles && props.handles[name];
         if (typeof handler === "string") {
@@ -113,7 +120,6 @@ export default {
       onPageUpdate: page => context.emit("query", page),
       colorOf: (row, column) => get(column.color, row),
       valueOf: (row, column, cid) => {
-        if (isRef(row)) row = row.value;
         let value = column.field instanceof Function
             ? column.field(row)
             : Array.isArray(row) ? row[cid] : row[column.field];

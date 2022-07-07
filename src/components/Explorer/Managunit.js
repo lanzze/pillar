@@ -46,7 +46,7 @@ export default {
               return store.dispatch("window.once", {modally: true, content: options.notice});
             }
           })
-          .then(() => options.handle(model, store))
+          .then(() => options.handle(model, store, context))
           .then(() => {
             if (options.inform) {
               store.commit("notify", {title: get(options.inform, model), color: "success"});
@@ -61,8 +61,9 @@ export default {
     }
     const doWindowChain = (options, model) => {
       const attribute = reactive({});
-      const submit = reactive({});
       const progress = ref(false);
+      const dialog = options.options;
+      const submit = reactive({});
 
       const doSubmitChain = value => {
         Promise.resolve()
@@ -74,7 +75,7 @@ export default {
                       submit.image = global["modal.submit.image.validating"];
                       submit.label = global["modal.submit.label.validating"];
                     })
-                    .then(() => options.verify(value, context))
+                    .then(() => options.verify(value, store, context))
                     .then(message => {
                       if (message != null) {
                         return Promise.reject(message);
@@ -90,7 +91,7 @@ export default {
                       submit.image = global["modal.submit.image.saving"];
                       submit.label = global["modal.submit.label.saving"];
                     })
-                    .then(() => options.stores(value, context))
+                    .then(() => options.stores(value, store, context))
                     .then(message => {
                       if (message != null) {
                         return Promise.reject(message);
@@ -102,7 +103,7 @@ export default {
               if (options.inform) {
                 store.commit("notify", {title: options.inform, color: "info"});
               }
-              store.dispatch("window.hide", options.id);
+              store.dispatch("window.hide", dialog.id);
             })
             .then(() => options.update && fetch())
             .catch(error => {
@@ -117,7 +118,7 @@ export default {
             })
       }
       const doCancelChain = () => {
-        Promise.reject()
+        Promise.resolve()
             .then(() => {
               if (options.cancel) {
                 return store.dispatch("window.once", {
@@ -133,12 +134,13 @@ export default {
       Promise.resolve()
           .then(() => {
             store.dispatch("window.open", {
-              id: options.id,
-              title: get(options.title, model),
-              sizes: options.sizes,
+              id: dialog?.id,
+              title: get(dialog?.title, model),
+              sizes: dialog?.sizes,
               content: options.content,
               onSubmit: doSubmitChain,
               onCancel: doCancelChain,
+              prevent: true,
               submit,
               progress,
               attribute
@@ -146,9 +148,18 @@ export default {
           })
           .then(() => {
             if (options.obtain) {
-              return Promise.resolve(progress.value = true)
-                  .then(() => options.obtain(model, store))
-                  .finally(() => progress.value = false);
+              return Promise.resolve()
+                  .then(() => {
+                    progress.value = true;
+                    submit.label = global["modal.submit.label.loading"];
+                    submit.image = global["modal.submit.image.loading"];
+                  })
+                  .then(() => options.obtain(model, store, context))
+                  .finally(() => {
+                    progress.value = false;
+                    submit.label = global["modal.submit.label"];
+                    submit.image = global["modal.submit.image"];
+                  });
             }
             return model;
           })
@@ -158,7 +169,7 @@ export default {
           .then(attrs => Object.assign(attribute, attrs));
     }
     const doCustomChain = (options, model) => {
-      Promise.resolve(options.handle(model, store))
+      Promise.resolve(options.handle(model, store, context))
           .then(() => options.update && fetch());
     }
 
@@ -175,11 +186,11 @@ export default {
 
       loading.value = true;
       errored.value = false;
-      source.call(null, {actives, condition, pagination}, context)
+      source({actives, condition, pagination}, store, context)
           .then(ret => {
-            const list = Array.isArray(ret) ? ret[0] : ret;
-            const page = Array.isArray(ret) ? ret[1] : null;
-            data.splice(0, data.length, ...list);
+            const rows = ret ? !Array.isArray(ret) ? ret.rows : ret : null;
+            const page = ret ? !Array.isArray(ret) ? ret.page : null : null;
+            if (rows != null) data.splice(0, data.length, ...rows);
             if (page && pagination) {
               pagination.count = page.count;
               pagination.total = page.total;
