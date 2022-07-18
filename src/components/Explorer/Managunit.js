@@ -1,12 +1,10 @@
-import {inject}                                 from "vue";
-import {provide}                                from "vue";
+import {inject, provide}                        from "vue";
 import {reactive, ref}                          from "vue";
 import {defineAsyncComponent, resolveComponent} from "vue";
 import {h}                                      from "vue";
-import {onMounted}                              from "vue";
 import {useStore}                               from "vuex";
-import {get}                                    from "./explorer.tools";
 import global                                   from "../component.options";
+import {get}                                    from "./explorer.tools";
 
 export default {
   props: {
@@ -19,25 +17,23 @@ export default {
     options: Object
   },
   setup(props, context) {
-    const options    = props.options,
-          source     = options.source,
-          condition  = options.condition,
-          pagination = options.pagination,
-          loading    = ref(false),
-          errored    = ref(false),
-          selection  = reactive([]),
-          data       = Array.isArray(source) ? source : reactive([]);
+    const options   = props.options,
+          condition = options.condition,
+          loading   = ref(false),
+          errored   = ref(false),
+          selection = reactive([]),
+          interceptors = reactive([]),
+          data      = {selection};
 
-    const actives = inject("actives", null);
-    const store = useStore();
+    const actives      = inject("actives", null),
+          store        = useStore();
 
     provide("selection", selection);
     provide("condition", condition);
-    provide("pagination", pagination);
+    provide("interceptors", interceptors);
+    provide("data", data);
     provide("loading", loading);
     provide("errored", errored);
-    provide("data", data);
-
 
     const doModifyChain = (options, model) => {
       Promise.resolve()
@@ -126,9 +122,7 @@ export default {
                 })
               }
             })
-            .then(() => {
-              store.dispatch("window.hide", options.id)
-            })
+            .then(() => store.dispatch("window.hide", options.id))
       }
 
       Promise.resolve()
@@ -173,36 +167,23 @@ export default {
           .then(() => options.update && fetch());
     }
 
-    const onActionHandler = (action, model = selection) => {
+    const fetch = (...args) => {
+      loading.value = true;
+      errored.value = false;
+      const parameter = {actives, condition, ...args};
+      Promise.all(interceptors.map(request => request(parameter, store, context)))
+          .catch(ex => errored.value = true)
+          .finally(() => loading.value = false);
+    }
+
+    const onActionHandler = (action, model = data) => {
       if (action.modify) return doModifyChain(action.modify, model);
       if (action.window) return doWindowChain(action.window, model);
       if (action.custom) return doCustomChain(action.custom, model);
     }
 
-    const fetch = (page, size) => {
-      if (!(source instanceof Function)) return;
-      if (pagination && page > 0) pagination.page = page;
-      if (pagination && size > 0) pagination.size = size;
+    const onQueryHandler = (...args) => fetch(...args);
 
-      loading.value = true;
-      errored.value = false;
-      source({actives, condition, pagination}, store, context)
-          .then(ret => {
-            const rows = ret ? !Array.isArray(ret) ? ret.rows : ret : null;
-            const page = ret ? !Array.isArray(ret) ? ret.page : null : null;
-            if (rows != null) data.splice(0, data.length, ...rows);
-            if (page && pagination) {
-              pagination.count = page.count;
-              pagination.total = page.total;
-            }
-          })
-          .catch(ex => errored.value = true)
-          .finally(() => loading.value = false);
-    }
-
-    onMounted(() => {
-      if (source instanceof Function && options.immediate) fetch(1);
-    });
 
     return () => h(resolveComponent("div"), {class: "component managunit"},
         [
@@ -222,7 +203,7 @@ export default {
           h(defineAsyncComponent(props.querier.component), {
             ...props.querier.attribute,
             onAction: onActionHandler,
-            onQuery: fetch
+            onQuery: onQueryHandler
           }),
           // render comment content
           props.comment &&
@@ -233,7 +214,8 @@ export default {
           // render real content
           h(defineAsyncComponent(props.content.component), {
             ...props.content.attribute,
-            onAction: onActionHandler
+            onAction: onActionHandler,
+            onQuery: onQueryHandler
           }),
           // render summary content
           props.summary &&

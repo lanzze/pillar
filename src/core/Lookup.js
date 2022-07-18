@@ -11,7 +11,14 @@ import store      from "../store";
  * Global ajax instance. Readonly!
  * @type {Readonly<AjaxAgent>}
  */
-const ajax = Object.freeze(new AjaxAgent(website.SUCCESS_CODE, handler, new AxiosAjax(defaults, request, response)));
+const ajax = Object.freeze(new AjaxAgent(
+    {
+      success: website.SUCCESS_CODE,
+      error: website.LOCAL_ERROR_CODE,
+      field: e => e.message || e.msg || e.info
+    },
+    handler,
+    new AxiosAjax(defaults, request, response)));
 
 /**
  * Global

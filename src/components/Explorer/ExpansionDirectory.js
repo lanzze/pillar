@@ -37,14 +37,11 @@ export default {
 
     const convert = (item) => {
       return h(resolveComponent("q-expansion-item"), {
-            ...props.native,
             key: item[mapping.value],
             label: item[mapping.label],
             caption: item[mapping.caption],
             icon: item[mapping.icon],
-            "active-class": "text--primary",
-            "expand-icon-toggle": false,
-            "onclick": () => onItemClick(item)
+            onclick: () => onItemClick(item)
           },
           item[mapping.items] ? item[mapping.items].map(e => convert(e)) : undefined
       );

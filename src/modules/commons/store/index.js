@@ -1,22 +1,19 @@
-// import schedule from "node-schedule";
-import missions from "../../../config/mission";
+import {state as bs, actions as ba} from "./store.board"
+import {state as ws, actions as wa} from "./store.window"
+import {state as ms, actions as ma} from "./store.mission"
 
 export default {
   state: {
-    jobs: null,           // All job instance.
-    /**
-     * The windows state. Do not change the property directly.
-     * @see window.open
-     * @see window.hide
-     */
-    windows: {
-      items: [],          // All window object(Opened).
-      front: null,        // An id point to foremost window.
-      layer: 1000000000   // Default css z-index.
-    }
+    jobs: null,
+    ...bs,
+    ...ws,
+    ...ms
   },
   mutations: {},
   actions: {
+    ...ba,
+    ...wa,
+    ...ma,
     /**
      * Show a message on screen. The options object passable value is:
      * @typedef {Object} options
@@ -30,112 +27,6 @@ export default {
      */
     notify(context, options) {
       alert(options.content || options.title);
-    },
-    "mission.register"(context, items = missions) {
-      if (context.state.jobs) {
-        context.state.jobs.forEach(job => job.cancel());
-      }
-
-      let config = {silent: true};
-      let model = {user: context.rootState.user};
-
-      let executor = (job) => {
-        let start = Date.now();
-
-        if (job.source) {
-          context.dispatch("request", Object.assign({
-            model: model,
-            config: config,
-            method: "post"
-          }, job.source)).then(data => {
-            if (job.execute) {
-              return job.execute(context, data, start);
-            }
-            context.commit("SET", {key: job.key, data: data});
-          });
-        } else if (job.execute) {
-          job.execute(context, null, start);
-        }
-      };
-
-      context.state.jobs = Object.seal(missions.filter(e => e.disabled !== true)
-          .map(job => {
-            if (job.immediate) executor(job);
-            if (job.rule) {
-              return schedule.scheduleJob(job.rule, function () {
-                return executor(job);
-              });
-            }
-          }).filter(job => !!job)
-      );
-    },
-
-    /**
-     * Open a window. If window already opened, then show in foremost and update the data.
-     * The 'options' passable value is:
-     * @typedef {Object} options
-     * @property {string} options.id The window id, unique.
-     * @property {[]|*} options.sizes [optional] The window size[width,height].
-     * @property {[]|*} options.title [optional] The window title.
-     * @property {[]|*} options.icon [optional] The window icon.
-     * @property {Object} options.attrs [optional] The attrs value for options.component.
-     * @property {Object} options.offset [optional] The window open offset.
-     * @property {Object} options.config [optional] the attrs value for {@link Dialog}.
-     * @property {function|String} options.content The inner component show on window.
-     * @property {[]} options.transition The animate on window open and close.
-     * @property {function} options.onSubmit [optional] Call when client click 'Submit' button on window.
-     * @property {function} options.onCancel [optional] Call when client click 'Cancel' button on window.
-     * @param state {Object} Vuex.Store.state.
-     * @param options {options} The window options.
-     */
-    "window.open"({state}, options) {
-      let window = state.windows.items.find(e => e.id === options.id);
-      if (window != null) {
-        state.windows.front = options.id;
-        return Object.assign(window, options);
-      }
-      if (options.content) {
-        setTimeout(() => state.windows.items.push(options), 0);
-      }
-    },
-
-    /**
-     * Close the window.
-     * The action will remove component from vue component tree, not just set invisible for css attribute.
-     * So, all resource of window used will be destroy.
-     * @param state {Object}
-     * @param id {String} The window id.
-     */
-    "window.hide"({state}, id) {
-      let index = state.windows.items.findIndex(e => e.id === id);
-      if (index >= 0) {
-        state.windows.items.splice(index, 1);
-      }
-    },
-    /**
-     * Open a window and return a {@link Promise} object, you can use '.then' or '.catch' get window action.
-     * If user click the 'SUBMIT' button, then the {@link Promise} will resolve,
-     * if user click the 'CANCEL' button, then the {@link Promise} will reject.
-     *
-     * Usually, when user click 'SUBMIT' or 'CANCEL' or other 'ACTION' event, the window will close,
-     * If you want to change that, set 'options.prevent=true'.
-     *
-     * @param context
-     * @param options {Object} like 'window.open'.
-     * @returns {Promise<unknown>}
-     */
-    "window.once"(context, options) {
-      return new Promise(((resolve, reject) => {
-        context.dispatch("window.open", {
-          id: Math.random().toString(16),
-          modally: true,
-          prevent: false,
-          maximizer: false,
-          ...options,
-          onSubmit: resolve,
-          onCancel: reject
-        })
-      }));
     }
   }
 };

@@ -27,7 +27,7 @@ export default {
       delete indices[id];
     }
 
-    return () => h("div", {class: "component.windows"}, props.items.map(item =>
+    return () => h("div", {class: "component windows"}, props.items.map(item =>
         h(Container, {
           key: item.id,
           ref: target => refs[item.id] = target,

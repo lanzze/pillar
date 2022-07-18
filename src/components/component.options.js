@@ -2,9 +2,19 @@ import Progresser from "./Modal/Progresser.js";
 
 const options = {
   "framework": "quasar",
-  "modal.maximum.icon": "mdi-window-maximize",
-  "modal.minimum.icon": "mdi-minus",
-  "modal.closer.icon": "mdi-close-circle",
+
+  "theme.color.names": ["primary", "secondary", "tertiary", "accent", "info", "positive", "negative", "success", "error", "warning"],
+
+  "loading.text": "加载中...",
+
+  "modal.maximum.image": "mdi-window-restore",
+  "modal.maximum.color": "transparent",
+  "modal.minimum.image": "mdi-window-maximize",
+  "modal.minimum.color": "transparent",
+
+  "modal.closer.image": "mdi-close",
+  "modal.closer.color": "transparent",
+
   "modal.cancel.image": undefined,
   "modal.cancel.label": "取消",
   "modal.cancel.color": "warning",

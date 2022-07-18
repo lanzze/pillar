@@ -9,9 +9,15 @@
           <div class="header--title">
             <slot name="title">{{title}}</slot>
           </div>
-          <div class="header--control" v-if="!!maximizer||!!closer">
-            <q-icon @click.stop="switchMaximum" size="xs" fab v-ripple v-if="!!maximizer"></q-icon>
-            <q-icon @click.stop="onCancel" size="20" fab v-ripple v-if="!!closer"></q-icon>
+          <div class="header--control" v-if="!!switcher||!!closer">
+            <!--<q-btn @click.stop="onSwitch"-->
+            <!--       :icon="switcher[maximum].image"-->
+            <!--       :color="switcher[maximum].color"-->
+            <!--       unelevated dense v-if="!!switcher"></q-btn>-->
+            <q-btn @click.stop="onCancel"
+                   :icon="closer.image"
+                   :color="closer.color"
+                   unelevated dense v-if="!!closer"></q-btn>
           </div>
         </slot>
       </div>
@@ -65,7 +71,6 @@ export default {
     },
     icon: String,
     title: String,
-    maximizer: Boolean,
     /**
      * Set dialog movable, the value specify move place.
      * Passable value is:
@@ -79,6 +84,10 @@ export default {
       validator(value) {
         return value === false || value === "header" || value === "body";
       }
+    },
+    maximizer: {
+      type: Boolean,
+      default: true
     },
     closer: {
       type: Boolean,
@@ -105,6 +114,20 @@ export default {
   },
   setup(props, context) {
     return {
+      switcher: props.maximizer === false ? false : {
+        [true]: {
+          image: options["modal.maximum.image"],
+          color: options["modal.maximum.color"]
+        },
+        [false]: {
+          image: options["modal.minimum.image"],
+          color: options["modal.minimum.color"]
+        }
+      },
+      closer: props.closer === false ? false : {
+        image: options["modal.closer.image"],
+        color: options["modal.closer.color"]
+      },
       submit: computed(() => {
         return props.submit === false ? false : {
           label: options["modal.submit.label"],

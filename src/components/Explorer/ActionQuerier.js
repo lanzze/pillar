@@ -14,17 +14,17 @@ export default {
     const condition = inject("condition");
     const selection = inject("selection");
 
-    return () => h("div", {class: "managunit querier classic"},
+    return () => h("div", {class: "managunit querier action"},
         [
           h(resolveComponent("q-input"), {
-            ...props.natives.keyword,
+            ...props.natives?.keyword,
             modelValue: condition[props.mapping.keyword],
             "update:model-value": value => condition[props.mapping.keyword] = value
           }),
           h("div", {class: "querier--splitter"}),
           h("div", {class: "querier--actions"}, [
             h(resolveComponent("q-btn"), {
-              ...props.natives.query,
+              ...props.natives?.query,
               onclick: () => context.emit("query")
             }),
             ...props.actions.map((e, i) => h(resolveComponent("q-btn"), {

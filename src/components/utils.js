@@ -1,5 +1,5 @@
-import {defineAsyncComponent} from "vue";
+import options from "./component.options";
 
-export const loadComponent = component => {
+const themeColors = options["theme.color.names"].reduce((p, v) => (p[v] = true, p), {});
 
-}
+export const isThemeColor = color => themeColors[color] === true;

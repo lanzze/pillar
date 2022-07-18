@@ -3,7 +3,7 @@ import {resolveComponent} from "vue";
 import {get}              from "./explorer.tools";
 
 export default {
-  name: "HighlightRender",
+  name: "ChipCell",
   props: ["model", "label", "title", "click", "color", "fontColor", "native"],
   emits: ["action"],
   setup(props, context) {

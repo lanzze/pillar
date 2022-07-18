@@ -1,63 +1,53 @@
 <template>
-  <q-table class="managunit content table--classic"
-           :rows="data"
+  <q-table class="managunit content table-classic"
+           :rows="list"
            :color="color"
            :columns="dimensions"
            :loading="loading"
+           :selection="selective"
+           :visible-columns="visibles"
+           row-key="name"
            v-model:selected="selection"
            @virtual-scroll="onVirtualScroll"
            v-bind="natives.table">
-    <template v-slot:loading>
-      <q-spinner-hourglass v-bind="natives.loading"></q-spinner-hourglass>
-    </template>
-    <template v-slot:body>
-      <template v-for="(row,i) in data" :key="i">
-        <tr @click="onTableEvent(row,'row:click')" @dblclick="onTableEvent(row,'row:dblclick')">
-          <td v-if="sequence">{{numberOf(i)}}</td>
-          <template v-for="(column,j) in dimensions" :key="j">
-            <td :class="classOf(row,column)"
-                :style="{width: column.width,color:colorOf(row,column,j)}">
-              <component :is="defineAsyncComponent(column.render.component)"
-                         v-bind="{model:row,...column.render.attribute}"
-                         @action="onActionHandler(row,$event)"
-                         v-if="!!column.render"></component>
-              <template v-else>{{valueOf(row, column, j)}}</template>
-            </td>
-          </template>
-          <td class="content--actions" v-if="!!actions">
-            <template v-for="(e,i) in actions">
-              <q-btn :key="i"
-                     :icon="e.image"
-                     :label="e.label"
-                     :title="e.title"
-                     :color="e.color"
-                     :size="e.size"
-                     padding="xs"
-                     fab
-                     :disable="disableOf(row,e)"
-                     v-bind="e.native"
-                     @click.stop="onActionHandler(row,e)"
-                     v-if="visibleOf(row,e)"></q-btn>
+    <template v-slot:body="{row,rowIndex}">
+      <tr>
+        <template v-for="(column,cid) in dimensions" :key="cid">
+          <td :class="[classOf(row,column)]"
+              :style="{width: column.width,color:colorOf(row,column,cid)}">
+            <template v-if="column.render==='index'">
+              {{indexOf(rowIndex)}}
             </template>
+            <template v-else-if="column.render==='action'">
+              <template v-for="(e,x) in actions">
+                <q-btn :key="x"
+                       :icon="e.image"
+                       :label="e.label"
+                       :title="e.title"
+                       :color="e.color"
+                       :size="e.size"
+                       padding="xs"
+                       fab
+                       :disable="disableOf(row,e)"
+                       v-bind="e.native"
+                       @click.stop="onActionHandler(row,e)"
+                       v-if="visibleOf(row,e)"></q-btn>
+              </template>
+            </template>
+            <component :is="defineAsyncComponent(column.render.component)"
+                       v-bind="{model:row,...column.render.attribute}"
+                       @action="onActionHandler(row,$event)"
+                       v-else-if="!!column.render"></component>
+            <template v-else>{{valueOf(row, column, cid)}}</template>
           </td>
-        </tr>
-      </template>
+        </template>
+      </tr>
     </template>
-    
-    <template v-slot:no-data>
-      <div class="content--nodata">
-        {{nodata}}
-      </div>
-    </template>
-    
     <template v-slot:pagination v-if="!!pagination">
-      <q-pagination :max="pagination.length||10"
+      <q-pagination :max="pagination.count||10"
                     direction-links
                     boundary-links
-                    icon-first="skip_previous"
-                    icon-last="skip_next"
-                    icon-prev="fast_rewind"
-                    icon-next="fast_forward"
+                    round
                     :model-value="pagination.page"
                     v-bind="natives.pagination"
                     @update:model-value="onPageUpdate"></q-pagination>
@@ -65,10 +55,14 @@
   </q-table>
 </template>
 <script>
-import {isRef}                from "vue";
+import {computed}             from "vue";
+import {ref}                  from "vue";
+import {reactive}             from "vue";
 import {inject}               from "vue";
 import {defineAsyncComponent} from "vue";
 import {get}                  from "./explorer.tools";
+
+const DefClass = {sequence: "content--sequence", action: "content--actions"};
 
 export default {
   name: "ClassicTableContent",
@@ -77,27 +71,54 @@ export default {
     natives: Object,
     actions: Array,
     handles: Object,
-    sequence: Boolean,
     dimensions: Array,
-    nodata: String
+    pagination: Object,
+    source: [Array, Function],
+    selective: String
   },
   emits: ["query", "action"],
   setup(props, context) {
-    const pagination = inject("pagination", null),
-          selection  = inject("selection", []),
-          loading    = inject("loading", false),
-          errored    = inject("errored", false),
-          data       = inject("data", []);
+    const selection    = inject("selection", []),
+          interceptors = inject("interceptors"),
+          loading      = inject("loading", false),
+          errored      = inject("errored", false);
+    
+    const source = props.source;
+    const dimensions = props.dimensions ? props.dimensions : ref([]);
+    const list = Array.isArray(source) ? source : reactive([]);
+    const pagination = props.pagination;
+    
+    const visibles = computed(() => dimensions.map(e => e.name))
+    
+    const fetch = (args, store, context) => {
+      if (source instanceof Function) {
+        return source(args, store, context)
+            .then(ret => {
+              let rows = ret && "source" in ret ? ret.source : ret;
+              let page = ret && "pagination" in ret ? ret.pagination : null;
+              let dims = ret && "dimensions" in ret ? ret.dimensions : null;
+              if (rows) list.splice(0, list.length, ...rows);
+              if (page) Object.assign(pagination, page);
+              if (dims) dimensions.value = dims;
+            })
+      }
+    }
     
     const onVirtualScroll = () => {
     
     }
+    
+    if (source instanceof Function) interceptors.push(fetch);
+    
+    context.emit("query");
+    
     return {
-      pagination,
+      dimensions,
+      visibles,
       selection,
       loading,
       errored,
-      data,
+      list,
       defineAsyncComponent,
       onVirtualScroll,
       onActionHandler: (row, action) => {
@@ -117,7 +138,7 @@ export default {
           context.emit("action", handler, row);
         }
       },
-      onPageUpdate: page => context.emit("query", page),
+      onPageUpdate: page => context.emit("query", {page}),
       colorOf: (row, column) => get(column.color, row),
       valueOf: (row, column, cid) => {
         let value = column.field instanceof Function
@@ -125,8 +146,8 @@ export default {
             : Array.isArray(row) ? row[cid] : row[column.field];
         return value || column.default;
       },
-      classOf: (row, column) => get(column.classes, row),
-      numberOf: (idx) => {
+      classOf: (row, column) => get(column.classes, row) || DefClass[column.render],
+      indexOf: (idx) => {
         return pagination ? pagination.size * (pagination.page - 1) + idx + 1 : idx + 1;
       },
       disableOf: (row, action) => get(action.disable, row) === true,

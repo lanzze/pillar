@@ -14,13 +14,15 @@ export default class AjaxAgent extends Ajax {
 
   /**
    * The constructor.
-   * @param code {Number} The success code from server;
+   * @param options {Object} The options for get info from response data;
    * @param handler {function(code:Number,error:Error)} The function for handle error.
    * @param ajax {Ajax?} The ajax instance.
    */
-  constructor(code, handler, ajax) {
+  constructor(options, handler, ajax) {
     super();
-    this.code = code;
+    this.success = options.success || 0;
+    this.error = options.error || -1;
+    this.field = options.field;
     this.handler = handler;
     this.ajax = ajax || new AxiosAjax();
   }
@@ -39,13 +41,13 @@ export default class AjaxAgent extends Ajax {
       }
       let data = res.data,
           code = data != null ? data.code : undefined;
-      if (code === undefined || code === this.code) {
-        return Promise.resolve(code === this.code ? data.data : data);
+      if (code === undefined || code === this.success) {
+        return Promise.resolve(code === this.success ? data.data : data);
       }
       return Promise.reject(res.data);
     }).catch(exc => {
       console.error(exc);
-      const [code, error] = toError(exc);
+      const [code, error] = toError(exc, this.error);
       if (config.silent !== true) {
         this.handler(code, error);
       }
@@ -72,7 +74,7 @@ export default class AjaxAgent extends Ajax {
       return Promise.resolve((res && res.data) || res);
     }).catch(exc => {
       console.error(exc);
-      const [code, error] = toError(exc);
+      const [code, error] = toError(exc, this.error);
       if (!config || config.silent !== true) {
         this.handler(code, error);
       }
@@ -89,7 +91,7 @@ export default class AjaxAgent extends Ajax {
         if (res.config.original === true) {
           return res.data;
         }
-        if (res.data.code !== this.code) {
+        if (res.data.code !== this.success) {
           return null;
         }
         return res.data ? res.data.data : res.data;
@@ -98,15 +100,16 @@ export default class AjaxAgent extends Ajax {
   }
 }
 
-function toError(exc) {
+function toError(exc, code) {
   if (exc instanceof Error) {
-    return [-1, exc];
+    return [code, exc];
   }
   if (typeof exc === "string") {
-    return [-1, new Error(exc)];
+    return [code, new Error(exc)];
   }
   if (typeof exc === "object") {
-    return [exc.code == null ? -1 : exc.code, new Error(exc.message || exc.msg || exc.info)];
+    const message = this.field instanceof Function ? this.field(exc) : exc[this.field];
+    return [exc.code == null ? code : exc.code, new Error(message)];
   }
-  return [-1, "Unknown error"];
+  return [code, new Error("Unknown error")];
 }

@@ -52,10 +52,7 @@ export default {
     /**
      * Set dialog can resize or not. If false, dialog cannot resize the window(include maximum).
      */
-    resizeable: {
-      type: Boolean,
-      default: false
-    },
+    resizeable: Boolean,
 
     /**
      * The extent object for limit the dialog position.
@@ -159,10 +156,10 @@ export default {
         this.$emit("update:offset", this.locator);
       }
     },
-    switchMaximum() {
+    onSwitch() {
       this.moving = false;
       this.$emit("update:maximum", this.isMaximum = !this.isMaximum);
-    },
+    }
   },
   computed: {
     mainClass() {
@@ -173,6 +170,6 @@ export default {
     },
     bodyStyle() {
       return toBodyStyle(this.$props, this.$data);
-    },
+    }
   }
 };

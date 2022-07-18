@@ -9,29 +9,30 @@ export default {
     zIndex: [Number, ref],
     options: Object
   },
+  emits: ["close"],
   setup(props, context) {
     let model = null;
+    const options = props.options;
     const validation = ref(true);
     const onAction = (name, ...args) => {
-      if (props.options.onAction) props.options.onAction(name, ...args);
-      if (props.options.prevent !== true) {
+      if (options.onAction) options.onAction(name, ...args);
+      if (options.prevent !== true) {
         context.emit("close");
       }
     }
     const onSubmit = () => {
-      if (props.options.onSubmit) props.options.onSubmit(model);
-      if (props.options.prevent !== true) {
+      if (options.onSubmit) options.onSubmit(model);
+      if (options.prevent !== true) {
         context.emit("close");
       }
     }
     const onCancel = () => {
-      if (props.options.onCancel) props.options.onCancel();
-      if (props.options.prevent !== true) {
+      if (options.onCancel) options.onCancel();
+      if (options.prevent !== true) {
         context.emit("close");
       }
     }
 
-    const options = props.options;
     const isComponent = options.content instanceof Function;
     const component = isComponent ? defineAsyncComponent(options.content) : undefined;
     return () => h(Transition, {

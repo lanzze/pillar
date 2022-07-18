@@ -1,13 +1,12 @@
-import {defineComponent}         from "vue";
-import {KeepAlive}               from "vue";
-import {resolveDynamicComponent} from "vue";
-import {ref}                     from "vue";
-import {provide}                 from "vue";
-import {computed, h}             from "vue";
-import {defineAsyncComponent}    from "vue";
+import {getCurrentInstance}   from "vue";
+import {ref}                  from "vue";
+import {provide}              from "vue";
+import {computed, h}          from "vue";
+import {defineAsyncComponent} from "vue";
 
 
 export default {
+  name: "Explorer",
   props: {
     config: {
       type: Object,
@@ -15,7 +14,9 @@ export default {
     }
   },
   setup(props, context) {
-    const config = props.config, directory = config.directory, managunit = config.managunit;
+    const config    = props.config,
+          directory = config.directory,
+          managunit = config.managunit;
 
     const directoryComponent = defineAsyncComponent(directory.component);
     const selected = ref(null), itemkey = config.configure.itemkey;
@@ -34,14 +35,9 @@ export default {
     return () => h("div", {class: "component explorer"}, {
       default: () =>
           [
-            h(directoryComponent,
-                {
-                  ...directory.attribute,
-                  onSelect: e => selected.value = e
-                }
-            ),
+            h(directoryComponent, {...directory.attribute, onSelect: e => selected.value = e}),
             optioned.value &&
-            h(defineAsyncComponent(optioned.value.component), optioned.value.attribute)
+            h(defineAsyncComponent(optioned.value.component), {...optioned.value.attribute})
           ]
     })
   }

@@ -12,23 +12,28 @@ export default {
     }
   },
   setup(props, context) {
-    const selections = inject("selections");
+    const data = inject("data");
 
-    return () => h("div", {class: "managunit menubar classic"},
-        props.items.map((e, i) => h(resolveComponent("q-btn"),
-                {
-                  ...e.native,
-                  key: i,
-                  class: "menubar--item",
-                  icon: e.icon,
-                  label: e.label,
-                  title: e.title,
-                  color: e.color,
-                  disable: get(e.disable, selections),
-                  onclick: () => context.emit("action", e)
-                }
-            )
-        )
+    return () => h("div",
+        {
+          class: "managunit menubar classic " + (props.color ? `bg-${props.color}` : "")
+        },
+        {
+          default: () => props.items.map((e, i) => h(resolveComponent("q-btn"),
+                  {
+                    ...e.native,
+                    key: i,
+                    class: "menu--item",
+                    icon: e.icon,
+                    label: e.label,
+                    title: e.title,
+                    color: e.color,
+                    disable: get(e.disable, data),
+                    onclick: () => context.emit("action", e)
+                  }
+              )
+          )
+        }
     )
   }
 }

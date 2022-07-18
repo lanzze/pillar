@@ -5,9 +5,18 @@
   .directory {
     width: 10%;
   }
+
+  .directory--component, .directory--attachment {
+    width: 100%;
+  }
+
+  .directory--component {
+    overflow-y: auto;
+  }
 }
 
 .component.managunit {
+
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -17,6 +26,12 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding: 5px 0;
+
+    button {
+      min-width: 7rem;
+      min-height: 2.5rem;
+    }
   }
 
   .querier {
@@ -26,22 +41,56 @@
     justify-content: flex-end;
     margin-top: 10px;
 
-    &--keyword {
+    .querier--keyword {
       flex: 1;
     }
 
-    &--splitter {
+    .querier--splitter {
       margin: 0 10px;
+    }
+
+    button {
+      min-width: 7rem;
+      min-height: 2.5rem;
     }
   }
 
-  .content {
+  .content.table-classic {
     margin-top: 10px;
     flex: 1;
   }
 
+  .sticky--header {
+    thead tr th {
+      position: sticky;
+      z-index: 1;
+    }
+
+    thead tr:last-child th {
+      top: 48px;
+    }
+
+    thead tr:first-child th {
+      top: 0;
+    }
+  }
+
+  .sticky--column {
+
+  }
+
+  .q-table__middle {
+    position: relative;
+  }
+
+  .q-table__middle table {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
   .content--actions {
-    display: flex;
     align-items: center;
     justify-content: center;
 
@@ -49,4 +98,5 @@
       margin: 0 5px;
     }
   }
+
 }

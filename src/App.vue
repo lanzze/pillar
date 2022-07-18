@@ -28,9 +28,9 @@ export default {
         title: "Window Title",
         // sizes: [null, 500],
         attrs: {
-          name: "Alice"
+          name: "Alice",
         },
-        content: () => import("./components/Editor.vue")
+        content: () => import("./components/Editor.vue"),
       },
       options2: {
         id: "test2",
@@ -38,19 +38,19 @@ export default {
         sizes: [500, 400],
         offset: {top: 10, left: 10},
         attrs: {
-          name: "Angel"
+          name: "Angel",
         },
-        content: () => import("./modules/main/routes/Main.vue")
-      }
+        content: () => import("./modules/main/routes/Main.vue"),
+      },
     }
   },
   methods: {
     onEvent() {
       alert(0)
-    }
+    },
   },
   computed: mapState({
-    windows: state => state.commons.windows
+    windows: state => state.commons.windows,
   }),
   mounted() {
     // this.$store.dispatch("window.open", this.options2);
@@ -59,7 +59,7 @@ export default {
     //   this.options2.attrs.name = "Bob"
     // }, 1500)
     
-  }
+  },
 }
 </script>
 
