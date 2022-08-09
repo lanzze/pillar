@@ -56,6 +56,18 @@ class RequestAgent {
     let inject = {[options.field || (options.method === 'get' ? 'params' : 'data')]: data};
     return Lookup.ajax.request(Object.assign(config, options, inject));
   }
+
+  /**
+   * Send an ajax request directly with given parameters.
+   * @param url The request url.
+   * @param data The request data.
+   * @param config The request config(See axios config).
+   * @param method The request method. Default is post.
+   * @return Promise<any>
+   */
+  request(url, data, config, method = "post") {
+    Lookup.ajax.request({url, data, ...config});
+  }
 }
 
 /**

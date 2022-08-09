@@ -1,15 +1,16 @@
 import {resolveComponent} from "vue";
+import {defineComponent}  from "vue";
 import {h}                from "vue";
 
-export default {
+export default defineComponent({
   name: "Progresser",
   props: ["name", "size", "color"],
-  setup(props, context) {
+  setup(props) {
     return () => h(resolveComponent(`q-spinner-${props.name}`),
         {
           class: "dialog--progresser",
           color: props.color,
-          size: props.size
+          size: props.size,
         })
-  }
-}
+  },
+})

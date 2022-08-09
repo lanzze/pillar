@@ -1,33 +1,36 @@
-import {h}                from "vue";
 import {resolveComponent} from "vue";
-import {inject}           from "vue/dist/vue";
-import {get}              from "./explorer.tools";
+import {defineComponent}  from "vue";
+import {h, inject}        from "vue";
+import {get}              from "./tools.explorer";
 
-export default {
+export default defineComponent({
+  name: "ActionQuerier",
   props: {
-    mapping: Object,
+    mapping: String,
     actions: Array,
-    natives: Object
+    natives: Object,
   },
   emits: ["query", "action"],
   setup(props, context) {
     const condition = inject("condition");
     const selection = inject("selection");
 
-    return () => h("div", {class: "managunit querier action"},
+    return () => h("div", {class: "managunit--querier action"},
         [
           h(resolveComponent("q-input"), {
             ...props.natives?.keyword,
-            modelValue: condition[props.mapping.keyword],
-            "update:model-value": value => condition[props.mapping.keyword] = value
+            class: "querier--keyword",
+            modelValue: condition[props.mapping],
+            "update:model-value": value => condition[props.mapping] = value,
           }),
           h("div", {class: "querier--splitter"}),
           h("div", {class: "querier--actions"}, [
             h(resolveComponent("q-btn"), {
               ...props.natives?.query,
-              onclick: () => context.emit("query")
+              class: "querier--query",
+              onclick: () => context.emit("query"),
             }),
-            ...props.actions.map((e, i) => h(resolveComponent("q-btn"), {
+            ...props.actions.map((e: any, i) => h(resolveComponent("q-btn"), {
                   ...e.native,
                   key: i,
                   class: "querier--action-item",
@@ -35,11 +38,11 @@ export default {
                   color: e.color,
                   label: e.label,
                   disable: get(e.disable, selection),
-                  onclick: () => context.emit("action", e)
-                })
-            )
-          ])
-        ]
+                  onclick: () => context.emit("action", e),
+                }),
+            ),
+          ]),
+        ],
     )
-  }
-}
+  },
+})

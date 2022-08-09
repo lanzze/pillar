@@ -10,10 +10,10 @@
             <slot name="title">{{title}}</slot>
           </div>
           <div class="header--control" v-if="!!switcher||!!closer">
-            <!--<q-btn @click.stop="onSwitch"-->
-            <!--       :icon="switcher[maximum].image"-->
-            <!--       :color="switcher[maximum].color"-->
-            <!--       unelevated dense v-if="!!switcher"></q-btn>-->
+            <q-btn @click.stop="onSwitch"
+                   :icon="switcher[maximum].image"
+                   :color="switcher[maximum].color"
+                   unelevated dense v-if="!!switcher"></q-btn>
             <q-btn @click.stop="onCancel"
                    :icon="closer.image"
                    :color="closer.color"
@@ -53,21 +53,19 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import {computed} from "vue";
-import {watch}    from "vue";
-import {reactive} from "vue";
-import options    from "../component.options";
+import options    from "../options";
 import Overlay    from "./Overlay";
 
 let zIndex = 333333;
 export default {
   name: "Dialog",
-  extends: Overlay,
   props: {
+    ...Overlay.props,
     zIndex: {
       type: Number,
-      default: () => zIndex++
+      default: () => zIndex++,
     },
     icon: String,
     title: String,
@@ -83,15 +81,15 @@ export default {
       default: "header",
       validator(value) {
         return value === false || value === "header" || value === "body";
-      }
+      },
     },
     maximizer: {
       type: Boolean,
-      default: true
+      default: true,
     },
     closer: {
       type: Boolean,
-      default: true
+      default: true,
     },
     cancel: [Boolean, Object],
     submit: [Boolean, Object],
@@ -100,62 +98,64 @@ export default {
      */
     header: {
       type: Boolean,
-      default: true
+      default: true,
     },
     /**
      * Set this dialog has footer or not.
      */
     footer: {
       type: Boolean,
-      default: true
+      default: true,
     },
     validation: Boolean,
-    progress: Boolean
+    progress: Boolean,
   },
+  emits: ["submit", "cancel", ...Overlay.emits],
   setup(props, context) {
-    return {
-      switcher: props.maximizer === false ? false : {
-        [true]: {
-          image: options["modal.maximum.image"],
-          color: options["modal.maximum.color"]
-        },
-        [false]: {
-          image: options["modal.minimum.image"],
-          color: options["modal.minimum.color"]
-        }
+    const overlay = Overlay.setup(props, context);
+    const switcher = props.maximizer === false ? false : {
+      "true": {
+        image: options["modal.maximum.image"],
+        color: options["modal.maximum.color"],
       },
-      closer: props.closer === false ? false : {
-        image: options["modal.closer.image"],
-        color: options["modal.closer.color"]
+      "false": {
+        image: options["modal.minimum.image"],
+        color: options["modal.minimum.color"],
       },
-      submit: computed(() => {
-        return props.submit === false ? false : {
-          label: options["modal.submit.label"],
-          color: options["modal.submit.color"],
-          image: options["modal.submit.image"],
-          ...props.submit
-        }
-      }),
-      cancel: computed(() => {
-        return props.cancel === false ? false : {
-          label: options["modal.cancel.label"],
-          color: options["modal.cancel.color"],
-          image: options["modal.cancel.image"],
-          ...props.cancel
-        }
-      }),
-      progresser: {
-        component: options["modal.progress"],
-        attribute: options["modal.progress.native"]
-      },
-      onMouseDown(event, target) {
-        if (props.movable === target) {
-          this.down(event);
-        }
-      },
-      onCancel: () => context.emit("cancel"),
-      onSubmit: () => context.emit("submit")
-    }
-  }
+    };
+    const closer = props.closer === false ? false : {
+      image: options["modal.closer.image"],
+      color: options["modal.closer.color"],
+    };
+    const submit = computed(() => {
+      return props.submit === false ? false : {
+        label: options["modal.submit.label"],
+        color: options["modal.submit.color"],
+        image: options["modal.submit.image"],
+        ...props.submit,
+      }
+    });
+    const cancel = computed(() => {
+      return props.cancel === false ? false : {
+        label: options["modal.cancel.label"],
+        color: options["modal.cancel.color"],
+        image: options["modal.cancel.image"],
+        ...props.cancel,
+      }
+    });
+    const progresser = {
+      component: options["modal.progress"],
+      attribute: options["modal.progress.native"],
+    };
+    const onMouseDown = (event, target) => {
+      if (props.movable === target) {
+        overlay.onMouseDown(event);
+      }
+    };
+    const onCancel = () => context.emit("cancel");
+    const onSubmit = () => context.emit("submit");
+    
+    return {...overlay, switcher, closer, submit, cancel, progresser, onMouseDown, onSubmit, onCancel}
+  },
 }
 </script>

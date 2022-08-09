@@ -4,7 +4,6 @@
   <!--<CH :config="sample"></CH>-->
   <Explorer :config="sample"></Explorer>
 </template>
-
 <script>
 
 import {mapState} from "vuex";
@@ -13,10 +12,11 @@ import Explorer   from "./components/Explorer/Explorer.js";
 import Dialog     from "./components/Modal/Dialog.vue";
 import Windows    from "./components/Windows/Windows";
 import sample     from "./components/Explorer/options.sample"
+import {useStore} from "vuex";
 
 export default {
   components: {CH, Explorer, Dialog, Windows},
-  data() {
+  setup() {
     return {
       tab: 0,
       event: "click",
@@ -58,6 +58,8 @@ export default {
     //   this.$store.dispatch("window.open", this.options);
     //   this.options2.attrs.name = "Bob"
     // }, 1500)
+    
+    console.log(useStore());
     
   },
 }

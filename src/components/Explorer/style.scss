@@ -2,8 +2,22 @@
   display: flex;
   flex-direction: row;
 
-  .directory {
+  .directory.expansion {
     width: 10%;
+
+    .dir--empty {
+      font-size: 1.2rem;
+      padding: 10px 0;
+      color: $info;
+    }
+
+    .dir--node {
+      margin: 2px 0;
+    }
+
+    .dir--node.active {
+      color: $primary;
+    }
   }
 
   .directory--component, .directory--attachment {
@@ -13,16 +27,43 @@
   .directory--component {
     overflow-y: auto;
   }
+
+  .directory.tree {
+    .q-tree__node--selected .q-tree__node-header-content {
+      color: $primary;
+    }
+  }
 }
 
 .component.managunit {
-
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   padding: 10px;
 
-  .menubar {
+  .managunit--catalog {
+    width: auto;
+    margin-right: 10px;
+    position: relative;
+    overflow-y: auto;
+
+    .catalog--expansion {
+      position: absolute;
+    }
+  }
+
+  .managunit--details {
+    width: auto;
+    margin-left: 10px;
+  }
+
+  .managunit--center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .managunit--menubar {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -34,7 +75,24 @@
     }
   }
 
-  .querier {
+  .managunit--heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .heading--title {
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .heading--subtitle {
+      font-size: 0.8rem;
+      color: #555;
+    }
+  }
+
+  .managunit--querier {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -55,48 +113,8 @@
     }
   }
 
-  .content.table-classic {
+  .managunit--content {
     margin-top: 10px;
     flex: 1;
   }
-
-  .sticky--header {
-    thead tr th {
-      position: sticky;
-      z-index: 1;
-    }
-
-    thead tr:last-child th {
-      top: 48px;
-    }
-
-    thead tr:first-child th {
-      top: 0;
-    }
-  }
-
-  .sticky--column {
-
-  }
-
-  .q-table__middle {
-    position: relative;
-  }
-
-  .q-table__middle table {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-
-  .content--actions {
-    align-items: center;
-    justify-content: center;
-
-    > * {
-      margin: 0 5px;
-    }
-  }
-
 }

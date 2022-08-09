@@ -1,39 +1,63 @@
-import {inject, provide}                        from "vue";
-import {reactive, ref}                          from "vue";
-import {defineAsyncComponent, resolveComponent} from "vue";
-import {h}                                      from "vue";
-import {useStore}                               from "vuex";
-import global                                   from "../component.options";
-import {get}                                    from "./explorer.tools";
+import {defineAsyncComponent} from "vue";
+import {defineComponent}      from "vue";
+import {inject, provide}      from "vue";
+import {reactive, ref, unref} from "vue";
+import {shallowReactive}      from "vue";
+import {shallowRef}           from "vue";
+import {h, watch}             from "vue";
+import {Ref}                  from "vue";
+import {ShallowRef}           from "vue";
+import {useStore, Store}      from "vuex";
+import global                 from "../options";
+import {get}                  from "./tools.explorer";
 
-export default {
+export default defineComponent({
+  name: "Managunit",
   props: {
+    catalog: Object,
     menubar: Object,
     heading: Object,
     querier: Object,
     comment: Object,
     content: Object,
     summary: Object,
-    options: Object
+    options: Object,
+    details: Object,
   },
   setup(props, context) {
-    const options   = props.options,
-          condition = options.condition,
-          loading   = ref(false),
-          errored   = ref(false),
-          selection = reactive([]),
-          interceptors = reactive([]),
-          data      = {selection};
+    const options: any          = props.options,
+          store: Store<any>     = useStore(),
+          interceptors: []      = [],
+          condition: any        = reactive(options.condition),
+          selection: []         = shallowReactive([]),
+          loading: Ref<boolean> = ref(false),
+          errored: Ref<boolean> = ref(false),
+          current: ShallowRef   = shallowRef(null),
+          node: any             = shallowRef(null),
+          unit: any             = inject("unit", null),
+          data: any             = {selection},
+          query: any            = {condition};
 
-    const actives      = inject("actives", null),
-          store        = useStore();
+    let counter = 0;
+    const total = Object.values(props).map((item: any) => item?.intercept).reduce((p, v) => p + (v || 0), 0);
+    const onCompleted = () => {
+      if (++counter >= total && options.immediate) {
+        fetch();
+      }
+    }
 
+    watch(unit, () => query.unit = unref(unit), {immediate: true});
+
+    provide("interceptors", interceptors);
     provide("selection", selection);
     provide("condition", condition);
-    provide("interceptors", interceptors);
-    provide("data", data);
+    provide("completed", onCompleted);
+    provide("current", current);
     provide("loading", loading);
     provide("errored", errored);
+    provide("query", query);
+    provide("node", node);
+    provide("data", data);
 
     const doModifyChain = (options, model) => {
       Promise.resolve()
@@ -45,21 +69,21 @@ export default {
           .then(() => options.handle(model, store, context))
           .then(() => {
             if (options.inform) {
-              store.commit("notify", {title: get(options.inform, model), color: "success"});
+              store.dispatch("notify", {title: get(options.inform, model), color: "success"});
             }
           })
           .then(() => options.update && fetch())
           .catch(() => {
             if (options.failed) {
-              store.commit("notify", {title: get(options.failed, model), color: "error"});
+              store.dispatch("notify", {title: get(options.failed, model), color: "error"});
             }
           });
     }
     const doWindowChain = (options, model) => {
-      const attribute = reactive({});
-      const progress = ref(false);
-      const dialog = options.options;
-      const submit = reactive({});
+      const dialog    = options.options,
+            attribute = reactive({}),
+            progress  = ref(false),
+            submit    = reactive<any>({});
 
       const doSubmitChain = value => {
         Promise.resolve()
@@ -118,7 +142,7 @@ export default {
             .then(() => {
               if (options.cancel) {
                 return store.dispatch("window.once", {
-                  modally: true, content: get(options.cancel, model)
+                  modally: true, content: get(options.cancel, model),
                 })
               }
             })
@@ -137,7 +161,7 @@ export default {
               prevent: true,
               submit,
               progress,
-              attribute
+              attribute,
             })
           })
           .then(() => {
@@ -167,11 +191,10 @@ export default {
           .then(() => options.update && fetch());
     }
 
-    const fetch = (...args) => {
+    const fetch = (none?: any) => {
       loading.value = true;
       errored.value = false;
-      const parameter = {actives, condition, ...args};
-      Promise.all(interceptors.map(request => request(parameter, store, context)))
+      Promise.all(interceptors.map((request: Function) => request(query, store, context)))
           .catch(ex => errored.value = true)
           .finally(() => loading.value = false);
     }
@@ -182,47 +205,68 @@ export default {
       if (action.custom) return doCustomChain(action.custom, model);
     }
 
-    const onQueryHandler = (...args) => fetch(...args);
+    const onQueryHandler = () => fetch();
+
+    const onCatalogHandler = item => fetch(query.node = node.value = item)
 
 
-    return () => h(resolveComponent("div"), {class: "component managunit"},
+    return () => h("div", {class: "component managunit"},
         [
-          // render menubar content
-          props.menubar &&
-          h(defineAsyncComponent(props.menubar.component), {
-            ...props.menubar.attribute,
-            onAction: onActionHandler
+          props.catalog &&
+          h(defineAsyncComponent(props.catalog.component), {
+            ...props.catalog.attribute,
+            class: "managunit--catalog",
+            onSelect: onCatalogHandler,
           }),
-          // render heading content
-          props.heading &&
-          h(defineAsyncComponent(props.heading.component), {
-            ...props.heading.attribute
-          }),
-          // render querier content
-          props.querier &&
-          h(defineAsyncComponent(props.querier.component), {
-            ...props.querier.attribute,
+          h("div", {class: "managunit--center"},
+              [
+                // render menubar content
+                props.menubar &&
+                h(defineAsyncComponent(props.menubar.component), {
+                  ...props.menubar.attribute,
+                  onAction: onActionHandler,
+                }),
+                // render heading content
+                props.heading &&
+                h(defineAsyncComponent(props.heading.component), {
+                  ...props.heading.attribute,
+                }),
+                // render querier content
+                props.querier &&
+                h(defineAsyncComponent(props.querier.component), {
+                  ...props.querier.attribute,
+                  onAction: onActionHandler,
+                  onQuery: onQueryHandler,
+                }),
+                // render comment content
+                props.comment &&
+                h(defineAsyncComponent(props.comment.component), {
+                  ...props.comment.attribute,
+                  onAction: onActionHandler,
+                }),
+                // render real content
+                h(defineAsyncComponent(props.content?.component), {
+                  ...props.content?.attribute,
+                  onAction: onActionHandler,
+                  onQuery: onQueryHandler,
+                  onSelect: model => current.value = model,
+                }),
+                // render summary content
+                props.summary &&
+                h(defineAsyncComponent(props.summary.component), {
+                  ...props.summary.attribute,
+                  onAction: onActionHandler,
+                }),
+              ],
+          ),
+          props.details &&
+          h(defineAsyncComponent(props.details.component), {
+            ...props.details.attribute,
+            class: "managunit--details",
+            onQuery: onQueryHandler,
             onAction: onActionHandler,
-            onQuery: onQueryHandler
           }),
-          // render comment content
-          props.comment &&
-          h(defineAsyncComponent(props.comment.component), {
-            ...props.comment.attribute,
-            onAction: onActionHandler
-          }),
-          // render real content
-          h(defineAsyncComponent(props.content.component), {
-            ...props.content.attribute,
-            onAction: onActionHandler,
-            onQuery: onQueryHandler
-          }),
-          // render summary content
-          props.summary &&
-          h(defineAsyncComponent(props.summary.component), {
-            ...props.summary.attribute,
-            onAction: onActionHandler
-          })
-        ])
-  }
-}
+        ],
+    )
+  },
+})

@@ -7,7 +7,7 @@ const rows = [
     protein: 4.0,
     sodium: 87,
     calcium: '14%',
-    iron: '1%'
+    iron: '1%',
   },
   {
     name: 'Ice cream sandwich',
@@ -17,7 +17,7 @@ const rows = [
     protein: 4.3,
     sodium: 129,
     calcium: '8%',
-    iron: '1%'
+    iron: '1%',
   },
   {
     name: 'Eclair',
@@ -27,7 +27,7 @@ const rows = [
     protein: 6.0,
     sodium: 337,
     calcium: '6%',
-    iron: '7%'
+    iron: '7%',
   },
   {
     name: 'Cupcake',
@@ -37,7 +37,7 @@ const rows = [
     protein: 4.3,
     sodium: 413,
     calcium: '3%',
-    iron: '8%'
+    iron: '8%',
   },
   {
     name: 'Gingerbread',
@@ -47,7 +47,7 @@ const rows = [
     protein: 3.9,
     sodium: 327,
     calcium: '7%',
-    iron: '16%'
+    iron: '16%',
   },
   {
     name: 'Jelly bean',
@@ -57,7 +57,7 @@ const rows = [
     protein: 0.0,
     sodium: 50,
     calcium: '0%',
-    iron: '0%'
+    iron: '0%',
   },
   {
     name: 'Lollipop',
@@ -67,7 +67,7 @@ const rows = [
     protein: 0,
     sodium: 38,
     calcium: '0%',
-    iron: '2%'
+    iron: '2%',
   },
   {
     name: 'Honeycomb',
@@ -77,7 +77,7 @@ const rows = [
     protein: 6.5,
     sodium: 562,
     calcium: '0%',
-    iron: '45%'
+    iron: '45%',
   },
   {
     name: 'Donut',
@@ -87,7 +87,7 @@ const rows = [
     protein: 4.9,
     sodium: 326,
     calcium: '2%',
-    iron: '22%'
+    iron: '22%',
   },
   {
     name: 'KitKat',
@@ -97,40 +97,41 @@ const rows = [
     protein: 7,
     sodium: 54,
     calcium: '12%',
-    iron: '6%'
-  }
+    iron: '6%',
+  },
 ]
+
 const columns = [
   {
     name: "index",
     label: "Index",
-    render: "index"
+    render: "index",
   },
   {
-    name: 'name',
     required: true,
+    name: 'name',
+    sort: true,
     label: 'Dessert (100g serving)',
     align: 'left',
     field: row => row.name,
-    format: val => `${val}`,
-    sortable: true,
+    order: 1,
     render: {
-      component: () => import("./Cell.Chip.js"),
+      component: () => import("../Table/cells/Cell.Chip"),
       attribute: {
         color: "secondary",
         label: v => v.name,
-        click: "test"
-      }
-    }
+        click: "test",
+      },
+    },
   },
-  {name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true},
-  {name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true},
+  {name: 'calories', align: 'center', label: 'Calories', field: 'calories', sort: (a, b) => a.calories - b.calories},
+  {name: 'fat', label: 'Fat (g)', field: 'fat'},
   {name: 'carbs', label: 'Carbs (g)', field: 'carbs'},
   {name: 'protein', label: 'Protein (g)', field: 'protein'},
   {name: 'sodium', label: 'Sodium (mg)', field: 'sodium'},
-  {name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)},
-  {name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)},
-  {label: "Action", render: "action"}
+  {name: 'calcium', label: 'Calcium (%)', field: 'calcium'},
+  {name: 'iron', label: 'Iron (%)', field: 'iron'},
+  {label: "Action", render: "action"},
 ]
 
 /**
@@ -144,6 +145,7 @@ const dimensions = [
     name: 'desc',
 
     // label for header
+    // or a function
     label: 'Dessert (100g serving)',
 
     // row Object property to determine value for this column
@@ -156,41 +158,33 @@ const dimensions = [
     // (optional) alignment
     align: 'left',
 
-    // (optional) tell QTable you want this column sortable
-    sortable: true,
-
     // (optional) compare function if you have
     // some custom data or want a specific way to compare two rows
-    sort: (a, b, rowA, rowB) => parseInt(a, 10) - parseInt(b, 10),
     // function return value:
     //   * is less than 0 then sort a to an index lower than b, i.e. a comes first
     //   * is 0 then leave a and b unchanged with respect to each other, but sorted with respect to all different elements
     //   * is greater than 0 then sort b to an index lower than a, i.e. b comes first
+    sort: (rowA, rowB, order) => 0,
 
     // (optional) override 'column-sort-order' prop;
-    // sets column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending)
-    sortOrder: 'ad', // or 'da'
-
-    // body td:
-    style: 'width: 500px',
+    // sets column sort order: 1 (ascending-descending) or -1 (descending-ascending)
+    order: 1, // or -1 or 0
     // or as Function --> style: row => ... (return String/Array/Object)
     classes: 'my-special-class',
     // or as Function --> classes: row => ... (return String)
 
-    // header th:
-    headerStyle: 'width: 500px',
-    headerClasses: 'my-special-class',
+    headerClass: "",
 
     // Render table cell as a component
     render: {
-      component: () => import("./Cell.Chip.js"),
+      component: () => import("../Table/cells/Cell.Chip"),
       attribute: {
         color: "secondary",
         label: v => v.name,
-        click: "action id or an object"
-      }
-    }
-  }
+        click: "action id or an object",
+      },
+    },
+  },
 ]
 
 /**
@@ -222,7 +216,7 @@ const action = {
       id: "windowId",
       title: e => `Edit ${e.name}`,
       sizes: [500, 300],
-      maximizer: false
+      maximizer: false,
     },
     // [Optional] Fetch data form server. Promise<T>
     obtain: (model, store, context) => {
@@ -246,7 +240,7 @@ const action = {
     // [Optional] Confirm exit when close the opened window
     cancel: "The data not save, you sure to exit edit?",
     // Specify update the data when handle success
-    update: false
+    update: false,
 
   },
   // [Optional] Modify the row(s) data
@@ -258,7 +252,7 @@ const action = {
     // Update the row property. Promise
     handle: (model, store, context) => {
       store.fetch("/api/enableDevice", model.id)
-    }
+    },
   },
   // [Optional] Do custom handle
   custom: {
@@ -268,8 +262,8 @@ const action = {
       store.fetch("/api/updateState", model.id, model.state)
           .then(() => context.commit("notify", "Update success"))
           .catch(() => context.commit("notify", "Update failed"))
-    }
-  }
+    },
+  },
 }
 /**
  * The Explorer component config sample.
@@ -304,106 +298,124 @@ export default {
    * The directory component options
    * @type Object
    */
-  // directory: {
-  //   component: () => import("./ExpansionDirectory.js"),
-  //   attribute: {
-  //     // The color for directory component
-  //     color: "primary",
-  //     /**
-  //      * The items for directory component. Provide an array or a function.
-  //      * Each item have property like:
-  //      * * label:String the navigation label.
-  //      * * value:any The item value.
-  //      * * items:Array The item children. If item have no children, set to undefined.
-  //      *
-  //      * >Function like:
-  //      * ```
-  //      * //item: The current clicked navigation item.
-  //      *  source:(item,store,context)=>{
-  //      *    if(item==null){
-  //      *      return store.fetch("/api/getRootNodes");
-  //      *    }
-  //      *    return store.fetch("/api/getChildren",item.id);
-  //      *  }
-  //      * ```
-  //      */
-  //     source: [
-  //       {
-  //         value: 1,
-  //         label: "气象快报"
-  //       },
-  //       {
-  //         value: 2,
-  //         label: "水情简报"
-  //       },
-  //       {
-  //         value: 3,
-  //         label: "风险简报"
-  //       }
-  //     ],
-  //     // The source item property mapping
-  //     mapping: {
-  //       label: "label",
-  //       value: "value",
-  //       items: "items"
-  //     },
-  //     // itemComponent: () => {}
-  //   }
-  // },
-
-  // for attachment directory only
-  directory:{
-    component:()=>import("./AttachmentDirectory.js"),
-    attribute:{
-      attachment: "someId",
-      directory: {
-        component: () => import("./ExpansionDirectory.js"),
-        attribute: {
-          // The color for directory component
-          color: "primary",
-          /**
-           * The items for directory component. Provide an array or a function.
-           * Each item have property like:
-           * * label:String the navigation label.
-           * * value:any The item value.
-           * * items:Array The item children. If item have no children, set to undefined.
-           *
-           * >Function like:
-           * ```
-           * //item: The current clicked navigation item.
-           *  source:(item,store,context)=>{
-           *    if(item==null){
-           *      return store.fetch("/api/getRootNodes");
-           *    }
-           *    return store.fetch("/api/getChildren",item.id);
-           *  }
-           * ```
-           */
-          source: [
+  directory: {
+    component: () => import("./ExpansionDirectory"),
+    attribute: {
+      /**
+       * The items for directory component. Provide an array or a function.
+       * Each item have property like:
+       * * label:String the navigation label.
+       * * value:any The item value.
+       * * items:Array The item children. If item have no children, set to undefined.
+       *
+       * >Function like:
+       * ```
+       * //item: The current clicked navigation item.
+       *  source:(item,store,context)=>{
+       *    if(item==null){
+       *      return store.fetch("/api/getRootNodes");
+       *    }
+       *    return store.fetch("/api/getChildren",item.id);
+       *  }
+       * ```
+       */
+      actives: 2,
+      source: [
+        {
+          unity: 1,
+          value: 1,
+          label: "气象快报",
+          image: "mdi-account",
+          nodes: [
             {
-              value: 1,
-              label: "气象快报"
+              unity: 1,
+              value: 4,
+              label: "气象日报",
             },
             {
-              value: 2,
-              label: "水情简报"
+              unity: 1,
+              value: 5,
+              label: "气象月报",
             },
-            {
-              value: 3,
-              label: "风险简报"
-            }
           ],
-          // The source item property mapping
-          mapping: {
-            label: "label",
-            value: "value",
-            items: "items"
-          },
-          // itemComponent: () => {}
-        }
+        },
+        {
+          unity: 1,
+          value: 2,
+          label: "水情简报",
+        },
+        {
+          unity: 1,
+          value: 3,
+          label: "风险简报",
+        },
+      ],
+      // The source item property mapping
+      mapping: {
+        label: "label",
+        value: "value",
+        nodes: "nodes",
+        image: "image",
       },
-    }
+      // [Optional] Set directory emit select event trigger condition.
+      // 'leaf': Only emit on leaf node.
+      // 'all' : For all node.
+      trigger: "leaf",
+    },
   },
+  // for attachment directory only
+  // directory: {
+  //   component: () => import("./AttachmentDirectory"),
+  //   attribute: {
+  //     attachment: "someId",
+  //     directory: {
+  //       component: () => import("./ExpansionDirectory"),
+  //       attribute: {
+  //         // The color for directory component
+  //         color: "primary",
+  //         /**
+  //          * The items for directory component. Provide an array or a function.
+  //          * Each item have property like:
+  //          * * label:String the navigation label.
+  //          * * value:any The item value.
+  //          * * items:Array The item children. If item have no children, set to undefined.
+  //          *
+  //          * >Function like:
+  //          * ```
+  //          * //item: The current clicked navigation item.
+  //          *  source:(item,store,context)=>{
+  //          *    if(item==null){
+  //          *      return store.fetch("/api/getRootNodes");
+  //          *    }
+  //          *    return store.fetch("/api/getChildren",item.id);
+  //          *  }
+  //          * ```
+  //          */
+  //         source: [
+  //           {
+  //             value: 1,
+  //             label: "气象快报",
+  //           },
+  //           {
+  //             value: 2,
+  //             label: "水情简报",
+  //           },
+  //           {
+  //             value: 3,
+  //             label: "风险简报",
+  //           },
+  //         ],
+  //         // The source item property mapping
+  //         mapping: {
+  //           label: "label",
+  //           value: "value",
+  //           items: "items",
+  //         },
+  //         // itemComponent: () => {}
+  //       },
+  //     },
+  //   },
+  // },
   /**
    * The Managunit component config.
    * Only to property, witch is:
@@ -424,42 +436,40 @@ export default {
    */
   managunit: {
     basic: {
-      component: () => import("./Managunit.js"),
+      component: () => import("./Managunit"),
       attribute: {
         // [Optional] The menu bar config
-        menubar: {
-          component: () => import("./ClassicMenubar.js"),
-          attribute: {
-            // [Optional] The menu bar background color
-            color: null,
-            // The menu items
-            items: [
-              {
-                label: "删除",
-                color: "primary",
-                disable: ({selection}) => !selection.length,
-                modify: {
-                  update: true,
-                  handle: ({selection}, store, context) => {
-                    return store.fetch("/api/deleteItem", selection.map(e => e.id));
-                  }
-                },
-                native: {}
-              }
-            ]
-          }
-        },
+        // menubar: {
+        //   component: () => import("./ClassicMenubar"),
+        //   attribute: {
+        //     // [Optional] The menu bar background color
+        //     color: null,
+        //     // The menu items
+        //     items: [
+        //       {
+        //         label: "删除",
+        //         color: "primary",
+        //         disable: ({selection}) => !selection.length,
+        //         modify: {
+        //           update: true,
+        //           handle: ({selection}, store, context) => {
+        //             return store.fetch("/api/deleteItem", selection.map(e => e.id));
+        //           },
+        //         },
+        //         native: {},
+        //       },
+        //     ],
+        //   },
+        // },
         // [Optional] The heading config
         heading: {
-          component: () => import("./ClassicHeading.js"),
+          component: () => import("./ClassicHeading"),
           attribute: {
-            // [Optional] The heading background color
-            color: "primary",
             // The title function for get title from navigation item
             title: v => v.label,
             // [Optional] The subtitle function for get title from navigation item
-            subtitle: v => v.subtitle
-          }
+            subtitle: v => v.subtitle || v.label,
+          },
         },
         // [Optional] The classic querier config
         // querier: {
@@ -476,7 +486,6 @@ export default {
         //     // [Optional] The query button icon
         //     image: undefined,
         //     // [Optional] The query button color
-        //     buttonColor: "primary",
         //     natives: {
         //       keyword: null,
         //       query: null
@@ -484,35 +493,44 @@ export default {
         //   }
         // },
         // [Optional]The ac
-        querier:{
-            component: () => import("./ClassicQuerier.js"),
-            attribute: {
-              // [Optional] The querier background color
-              color: "primary",
-              // The field for keyword condition
-              field: "keyword",
-              // The keyword input label
-              label: "输入关键字",
-              // The query button label
-              query: "查询",
-              // [Optional] The query button icon
-              image: undefined,
-              // [Optional] The query button color
-              buttonColor: "primary",
-              natives: {
-                keyword: null,
-                query: null
-              }
-            }
+        querier: {
+          component: () => import("./ActionQuerier"),
+          attribute: {
+            mapping: "keyword",
+            natives: {
+              keyword: {label: "输入关键字"},
+              query: {
+                label: "Query",
+                color: "primary",
+                icon: "mdi-magnify",
+              },
+            },
+            actions: [],
+          },
         },
         // The content config
         content: {
-          component: () => import("./ClassicTableContent.vue"),
+          /**
+           * [Optional]
+           * >
+           * If true, the component must call completed function in {@link setup}.
+           * The completed function provide by {@link managunit} component.
+           * This property can provide by any component in {@link managunit}'s children component.
+           * If provided, you must register a function in interceptors function array.
+           *
+           * >
+           * The interceptors(provide by {@link managunit}) is function array.
+           * Each function register by their children component for load data from server.
+           * >
+           * Only query event fired, each interceptor will be call.
+           * >
+           * #In this component, this property must be true.
+           */
+          intercept: true,
+          component: () => import("./ClassicTableContent.js"),
           attribute: {
-            // [Optional] The content background color
-            color: "primary",
-            // [Optional] Specify the table have sequence
-            sequence: true,
+            // [Optional] Specify the table component. If you provide, use default.
+            content: null,
             // [Optional] Define table actions.
             actions: [
               {
@@ -542,8 +560,8 @@ export default {
                     })
                   },
                   // [Optional] Convert the model to component(The opened) attribute
-                  toAttr: model => model
-                }
+                  toAttr: model => model,
+                },
               },
               {
                 id: "custom",
@@ -554,18 +572,20 @@ export default {
                   update: false,
                   handle: (model, store, context) => {
                     alert(0)
-                  }
-                }
+                  },
+                },
 
-              }
+              },
             ],
             // [Optional] Define table events
             handles: {
               // [Optional] Define table row single click, an action id or action object
               "row:click": "test",
               // [Optional] Define table row double click, an action id or action object
-              "row:dblclick": {}
+              "row:dblclick": {},
             },
+            identity: "name",
+            selective: "multiple",
             // Define table header
             dimensions: columns,
             // [Optional] The pagination object(length is for max page item)
@@ -580,46 +600,89 @@ export default {
              * @param store {Store}
              * @return Promise<[Array,Object]>
              */
-            source: ({item, condition, pagination}, store) => {
-              // return Promise.resolve({rows:data,page:{page:1,count:10}});
-              // return Promise.resolve(rows);
-              // return Promise.resolve(rows);
+            source: ({unit, node, condition, pagination}, store) => {
+              let {page, size} = pagination;
+              let indices = Array.from(new Array(5)).map(i => Math.floor(Math.random() * 10) % 5);
+              console.log(indices);
               return new Promise((resolve) => {
-                setTimeout(() => resolve(rows), 1500);
+                setTimeout(() => resolve({
+                  source: rows.filter((e, i) => indices.indexOf(i) >= 0),
+                  pagination,
+                }), 100);
               })
             },
             // [Optional] The q-table native attribute
-            natives: {
-              table: {},
-              pagination: {}
-            }
-          }
+          },
         },
         // [Optional] The comment config
         comment: null,
         // [Optional] The summary config
         summary: null,
+        catalog: {
+          component: () => import("./TreeDirectory"),
+          attribute: {
+            source: [
+              {
+                unity: 1,
+                value: 1,
+                label: "贵州省",
+                nodes: [
+                  {
+                    unity: 1,
+                    value: 4,
+                    label: "贵阳市",
+                  },
+                  {
+                    unity: 1,
+                    value: 5,
+                    label: "遵义市",
+                  },
+                ],
+              },
+              {
+                unity: 1,
+                value: 2,
+                label: "云南省",
+              },
+              {
+                unity: 1,
+                value: 3,
+                label: "四川省",
+              },
+            ],
+            mapping: {
+              label: "label",
+              value: "value",
+              nodes: "nodes",
+            },
+            actives: 2,
+          },
+        },
+        details: null,
         // [Optional] The content background
         options: {
           color: "primary",
           // [Optional] Immediate query when navigation changed
           immediate: true,
           // [Optional] The condition object for query resource
-          condition: {}
-        }
-      }
+          condition: {},
+        },
+      },
     },
-    items: {
+    units: {
       // as basic
       [1]: {},
-      [2]: null
-    }
+      [2]: null,
+    },
   },
   // The source item property mapping
   configure: {
     // [Optional] component background color
     color: "primary",
-    // The key for item to find options from managunit.items
-    itemkey: "value",
-  }
+    // The key for item to find options from managunit.units
+    unity: "unity",
+    // If provide this value, then render a component on content right.
+    // So, you can use teleport component attach it.
+    attachment: "anid",
+  },
 }

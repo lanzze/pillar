@@ -1,3 +1,5 @@
+import {isRef} from "vue";
+
 function ensure(value) {
   return value == null ? null : isNaN(value) ? value : `${value}px`;
 }
@@ -38,7 +40,8 @@ export function toMainStyle(props, data) {
     return {position: props.position, zIndex: props.zIndex};
   }
 
-  let locator = doLocator(props.offset, props.sizes, data.locator, !data.isMaximum, false);
+  let maximum = isRef(data.maximum) ? data.maximum.value : data.maximum;
+  let locator = doLocator(props.offset, props.sizes, data.locator, !maximum, false);
 
   if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {
@@ -53,9 +56,10 @@ export function toMainStyle(props, data) {
   return {position: props.position, overflow: props.overflow, zIndex: props.zIndex, ...locator};
 }
 
-export function toBodyStyle(props, data) {
+export function toBodyStyle(props, data): Object {
+  let maximum = isRef(data.maximum) ? data.maximum.value : data.maximum;
   let position = props.modally ? "absolute" : null;
-  let locator = doLocator(props.offset, props.sizes, data.locator, props.modally && !data.isMaximum, true);
+  let locator = doLocator(props.offset, props.sizes, data.locator, props.modally && !maximum, true);
 
   if (props.modally === false) {
     if (props.sizes && isp(props.sizes[0])) {

@@ -7,6 +7,8 @@ const options = {
 
   "loading.text": "加载中...",
 
+  "empty.text": "暂无数据...",
+
   "modal.maximum.image": "mdi-window-restore",
   "modal.maximum.color": "transparent",
   "modal.minimum.image": "mdi-window-maximize",
@@ -25,7 +27,6 @@ const options = {
   "modal.submit.color": "primary",
   "modal.submit.native": {},
 
-  // "modal.progress": "q-icon",
   "modal.progress": Progresser,
   "modal.progress.native": {color: "white", size: "23px"},
 
@@ -36,8 +37,19 @@ const options = {
   "modal.submit.image.saving": "hourglass",
 
   "modal.submit.label.validating": "验证中...",
-  "modal.submit.image.validating": "hourglass"
+  "modal.submit.image.validating": "hourglass",
 
+
+  "chart.button.normal": "secondary",
+  "chart.button.active": "secondary",
+  "chart.button.native": {},
+  "date.millisecond": () => Date.now(),
+
+  "stateful.error": {tag: "q-icon", label: "暂无数据...", image: "mdi-alert", color: "info"},
+  "stateful.empty": {tag: "q-icon", label: "暂无数据...", image: "mdi-information", color: "info"},
+  "stateful.loading": {tag: "q-spinner-hourglass", label: "加载中...", color: "info"},
+
+  "renderer.button.color": "primary",
 };
 
 export function configure(newOptions) {

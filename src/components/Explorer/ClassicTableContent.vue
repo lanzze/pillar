@@ -60,6 +60,7 @@ import {ref}                  from "vue";
 import {reactive}             from "vue";
 import {inject}               from "vue";
 import {defineAsyncComponent} from "vue";
+import {onMounted}            from "vue";
 import {get}                  from "./explorer.tools";
 
 const DefClass = {sequence: "content--sequence", action: "content--actions"};
@@ -110,7 +111,9 @@ export default {
     
     if (source instanceof Function) interceptors.push(fetch);
     
-    context.emit("query");
+    // context.emit("query");
+  
+    onMounted(()=>console.log("content amounted"));
     
     return {
       dimensions,

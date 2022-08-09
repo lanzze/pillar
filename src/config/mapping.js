@@ -4,10 +4,10 @@
  *
  * @type {{[string]:*}}
  */
-const mappings = {};
+const mapping = {};
 
 export function register(target) {
-  Object.assign(mappings, target);
+  Object.assign(mapping, target);
 }
 
-export default mappings;
+export default mapping;
